@@ -37,7 +37,7 @@ public class CoffeeService {
 
     }
 
-    public void addCoffee(Coffee coffee){
+    public void addCoffee(Coffee coffee) {
 
         coffeeRepository.save(coffee);
     }
