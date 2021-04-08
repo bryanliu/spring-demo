@@ -72,7 +72,7 @@ public class CoffeeRepositoryTest {
         assertEquals("Total should increase", 6, coffeeRepository.count());
         c = coffeeRepository.findByName("test1");
         assertEquals("Price should be original", Integer.valueOf(40), c.getPrice());
-        // Update price
+        //Get and Update price
         c.setPrice(50);
         coffeeRepository.save(c);
         assertEquals("Total count should be same", 6, coffeeRepository.count());
