@@ -29,11 +29,11 @@ public class Coffee implements Serializable {
 
     private String name;
 
-    private int price;
+    private Integer price;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
 
     @Column(updatable = false)
     @UpdateTimestamp
