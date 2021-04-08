@@ -1,0 +1,13 @@
+spring:
+  datasource:
+    data: classpath:data-test.sql
+    initialization-mode: embedded
+  endpoints:
+    web:
+      exposure:
+        include:
+management:
+  endpoints:
+    web:
+      exposure:
+        include: info, env, health, beans
