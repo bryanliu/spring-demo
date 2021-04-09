@@ -13,6 +13,8 @@ create table t_coffee
 
 );
 
+create index coffee_name_idx on t_coffee(name);
+
 create table t_order
 (
     id          int identity,
