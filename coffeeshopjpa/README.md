@@ -128,8 +128,12 @@ Optional<Coffee> result = coffeeRepository.findOne(Example.of(Coffee.builder().n
 到这里，一个模型的CRUD就完成了。
 具体测试查看 [CoffeeRepositoryTest.java](src/test/java/com/bry/coffeeshopjpa/repository/CoffeeRepositoryTest.java)
 
+## 其他？
+这边只是完成了一个基本数据层的实现，包括 `repository` 和 `model`层。
+
+其他数据处理的扩展点包括分页查询，关联查询等，作为**TODO**吧
+
+至于`Service` `Controller` 就可以根据具体需求扩展拉。
 
 
-    
-    
     
