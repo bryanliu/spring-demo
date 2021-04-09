@@ -1,0 +1,13 @@
+package com.bry.coffeeshopmybatis;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+
+@SpringBootTest
+class CoffeeshopmybatisApplicationTests {
+
+	@Test
+	void contextLoads() {
+	}
+
+}
