@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.AdviceMode;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,7 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 @SpringBootApplication
 @Slf4j
 @RestController
-//@EnableTransactionManagement(mode= AdviceMode.ASPECTJ)
+@EnableTransactionManagement()
 public class SpringdemoApplication implements CommandLineRunner {
 
     @Autowired
@@ -36,28 +35,28 @@ public class SpringdemoApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-//        //        showConnection();
-//        //        showdata();
-//        fooService.insertRow();
-//        log.info("CCC count {}", jdbcTemplate.queryForObject("select count(*) from foo where bar='CCC'", Long.class));
-//
-//        try {
-//            fooService.insertWithException();
-//        } catch (RollbackException e) {
-//            log.info("DDD count {}",
-//                    jdbcTemplate.queryForObject("select count(*) from foo where bar='DDD'", Long.class));
-//            e.printStackTrace();
-//        }
-//
-//        try {
-//            fooService.externalInsertwihtException();
-//        } catch (RollbackException e) {
-//            log.info("DDD count {}",
-//                    jdbcTemplate.queryForObject("select count(*) from foo where bar='DDD'", Long.class));
-//            e.printStackTrace();
-//        }
-//
-//        log.info("DDD count {}", jdbcTemplate.queryForObject("select count(*) from foo where bar='DDD'", Long.class));
+        //        //        showConnection();
+        //        //        showdata();
+        //        fooService.insertRow();
+        //        log.info("CCC count {}", jdbcTemplate.queryForObject("select count(*) from foo where bar='CCC'", Long.class));
+        //
+        //        try {
+        //            fooService.insertWithException();
+        //        } catch (RollbackException e) {
+        //            log.info("DDD count {}",
+        //                    jdbcTemplate.queryForObject("select count(*) from foo where bar='DDD'", Long.class));
+        //            e.printStackTrace();
+        //        }
+        //
+        //        try {
+        //            fooService.externalInsertwihtException();
+        //        } catch (RollbackException e) {
+        //            log.info("DDD count {}",
+        //                    jdbcTemplate.queryForObject("select count(*) from foo where bar='DDD'", Long.class));
+        //            e.printStackTrace();
+        //        }
+        //
+        //        log.info("DDD count {}", jdbcTemplate.queryForObject("select count(*) from foo where bar='DDD'", Long.class));
 
     }
 

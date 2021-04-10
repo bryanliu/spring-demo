@@ -1,15 +1,16 @@
 package com.bry.coffeeshopjpa.repository;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.springframework.data.domain.ExampleMatcher.GenericPropertyMatchers.exact;
 
 import java.util.List;
 import java.util.Optional;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Example;
@@ -18,7 +19,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import com.bry.coffeeshopjpa.model.Coffee;
 
@@ -26,7 +26,6 @@ import lombok.extern.slf4j.Slf4j;
 
 @SpringBootTest
 @Slf4j
-@RunWith(SpringRunner.class)
 public class CoffeeRepositoryTest {
 
     @Autowired
@@ -90,15 +89,15 @@ public class CoffeeRepositoryTest {
         Coffee c = Coffee.builder().name("test1").price(40).build();
         // Insert a new object
         coffeeRepository.save(c);
-        assertEquals("Total should increase", 6, coffeeRepository.count());
+        assertEquals(6, coffeeRepository.count(), "Total should increase");
         c = coffeeRepository.findByName("test1");
-        assertEquals("Price should be original", Integer.valueOf(40), c.getPrice());
+        assertEquals(Integer.valueOf(40), c.getPrice(), "Price should be original");
         //Get and Update price
         c.setPrice(50);
         coffeeRepository.save(c);
-        assertEquals("Total count should be same", 6, coffeeRepository.count());
+        assertEquals(6, coffeeRepository.count(), "Total count should be same");
         Coffee res = coffeeRepository.findByName("test1");
-        assertEquals("Should be new price", Integer.valueOf(50), res.getPrice());
+        assertEquals(Integer.valueOf(50), res.getPrice(), "Should be new price");
         //Cleanup the test data
         coffeeRepository.deleteById(res.getId());
         assertEquals(5, coffeeRepository.count());
@@ -118,22 +117,22 @@ public class CoffeeRepositoryTest {
     }
 
     @Test
+    @DisplayName("get list by defined sort")
     public void testGetAllSorted() {
         // 测试排序
         Sort sort = Sort.by(Sort.Direction.ASC, "price");
         List<Coffee> coffees = coffeeRepository.findAll(sort);
         log.info(coffees.toString());
-        assertEquals("sorted price by price asc, first price is 10",
-                Integer.valueOf(10), coffees.get(0).getPrice());
+        assertEquals(Integer.valueOf(10), coffees.get(0).getPrice(), "sorted price by price asc, first price is 10");
         // findall by sort price desc
         sort = Sort.by(Sort.Direction.DESC, "price");
         coffees = coffeeRepository.findAll(sort);
-        assertEquals("sorted price by price desc, should be 30",
-                new Integer(30), coffees.get(0).getPrice());
+        assertEquals(new Integer(30), coffees.get(0).getPrice(), "sorted price by price desc, should be 30");
 
     }
 
     @Test
+    @DisplayName("should delete all records")
     public void testDeleteAll() {
         //测试批量删除所有接口
         List<Coffee> coffees = coffeeRepository.findAll();
@@ -149,15 +148,18 @@ public class CoffeeRepositoryTest {
     }
 
     @Test
+    @DisplayName("Test get recoreds by page")
     public void testPagable() {
         Pageable pageable = PageRequest.of(1, 2);
         //Page 从0 开始，第二个参数是每页的数量
         Page<Coffee> page = coffeeRepository.findAll(pageable);
+        assertAll(
+                () -> assertEquals(3, page.getTotalPages(), "总页数"),
+                () -> assertEquals(5, page.getTotalElements(), "总记录数"),
+                () -> assertEquals(1, page.getNumber(), "当前页数"),
+                () -> assertEquals(2, page.getNumberOfElements(), "当前页面的记录数")
+        );
 
-        assertEquals("总页数", 3, page.getTotalPages());
-        assertEquals("总记录数", 5, page.getTotalElements());
-        assertEquals("当前页数", 1, page.getNumber());
-        assertEquals("当前页面的记录数", 2, page.getNumberOfElements());
         page.getContent().forEach(coffee -> log.info(coffee.toString()));
 
     }

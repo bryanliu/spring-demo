@@ -1,17 +1,15 @@
 package com.bry.coffeeshopmybatisgenerator.mapper;
 
-import static org.junit.Assert.assertNotNull;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import com.bry.coffeeshopmybatisgenerator.model.auto.Coffee;
 
 @SpringBootTest
-@RunWith(SpringRunner.class)
 public class CoffeeRepoTest {
 
     @Autowired
@@ -32,6 +30,5 @@ public class CoffeeRepoTest {
         assertNotNull(c);
 
     }
-
 
 }

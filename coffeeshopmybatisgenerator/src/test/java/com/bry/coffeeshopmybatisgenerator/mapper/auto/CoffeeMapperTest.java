@@ -6,10 +6,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import com.bry.coffeeshopmybatisgenerator.model.auto.Coffee;
 import com.bry.coffeeshopmybatisgenerator.model.auto.CoffeeExample;
@@ -18,7 +16,6 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @SpringBootTest
-@RunWith(SpringRunner.class)
 class CoffeeMapperTest {
 
     @Autowired

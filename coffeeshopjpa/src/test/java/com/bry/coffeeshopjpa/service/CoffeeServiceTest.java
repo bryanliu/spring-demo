@@ -1,31 +1,24 @@
 package com.bry.coffeeshopjpa.service;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Optional;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import com.bry.coffeeshopjpa.model.Coffee;
 
 @SpringBootTest
-@RunWith(SpringRunner.class)
 public class CoffeeServiceTest {
 
     @Autowired
     private CoffeeService coffeeService;
-
-    @Test
-    public void testGetCoffeeByPriceNotExists() {
-
-        Optional<Coffee> coffee = coffeeService.getCoffeeByName("aa");
-
-        assertFalse(coffee.isPresent());
-    }
 
     @Test
     public void testGotCoffeeByPriceExists() {
@@ -34,6 +27,18 @@ public class CoffeeServiceTest {
         assertTrue(coffee.isPresent());
 
         assertEquals("espresso", coffee.get().getName());
+    }
+
+    @Nested
+    @DisplayName("JUnit 5 的新特性，可以将Case 分组")
+    class NegativeCase {
+        @Test
+        public void testGetCoffeeByPriceNotExists() {
+
+            Optional<Coffee> coffee = coffeeService.getCoffeeByName("aa");
+
+            assertFalse(coffee.isPresent());
+        }
     }
 
 }
