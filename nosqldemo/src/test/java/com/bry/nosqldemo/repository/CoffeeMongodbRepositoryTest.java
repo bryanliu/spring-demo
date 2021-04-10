@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
+import org.springframework.data.domain.Sort;
 
 import com.bry.nosqldemo.model.Coffee;
 
@@ -117,6 +118,23 @@ class CoffeeMongodbRepositoryTest {
 
         assertTrue(res.isPresent());
         assertEquals(300, res.get().getPrice());
+
+    }
+
+    @Test
+    public void testFindAllSort() {
+        Coffee espresso =
+                Coffee.builder().name("espresso").price(200).createTime(new Date()).updateTime((new Date())).build();
+        Coffee latte =
+                Coffee.builder().name("latte").price(300).createTime(new Date()).updateTime((new Date())).build();
+
+        List<Coffee> res = coffeeMongodbRepository.saveAll(Arrays.asList(espresso, latte));
+
+        List<Coffee> coffees = coffeeMongodbRepository.findAll(Sort.by("price").descending());
+
+        assertEquals(2, coffees.size());
+        assertEquals(300, coffees.get(0).getPrice());
+
 
     }
 
