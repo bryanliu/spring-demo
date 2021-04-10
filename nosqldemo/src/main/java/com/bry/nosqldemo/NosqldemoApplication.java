@@ -11,7 +11,7 @@ import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 
 @SpringBootApplication
-@EnableMongoRepositories
+//@EnableMongoRepositories
 public class NosqldemoApplication {
 
 	public static void main(String[] args) {

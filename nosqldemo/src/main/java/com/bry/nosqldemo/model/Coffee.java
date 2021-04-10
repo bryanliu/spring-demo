@@ -18,12 +18,8 @@ import lombok.NoArgsConstructor;
 public class Coffee {
     @Id
     private String id;
-
     private String name;
-
     private Integer price;
-
     private Date createTime;
-
     private Date updateTime;
 }
