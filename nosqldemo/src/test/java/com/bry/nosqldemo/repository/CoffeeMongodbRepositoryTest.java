@@ -3,6 +3,7 @@ package com.bry.nosqldemo.repository;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.springframework.data.domain.ExampleMatcher.GenericPropertyMatchers.contains;
 import static org.springframework.data.domain.ExampleMatcher.GenericPropertyMatchers.exact;
 
 import java.util.Arrays;
@@ -84,20 +85,29 @@ class CoffeeMongodbRepositoryTest {
     }
 
     @Test
-    @Disabled
+    //@Disabled
     void findByExample() {
 
         Coffee espresso =
-                Coffee.builder().name("espresso").price(200).createTime(new Date()).updateTime((new Date())).build();
+                Coffee.builder().name("espresso").price(300).createTime(new Date()).updateTime((new Date())).build();
         coffeeMongodbRepository.insert(espresso);
-        coffeeMongodbRepository.findByName("espresso").forEach(row -> log.info("found {}", row));
+        //coffeeMongodbRepository.findByName("espresso").forEach(row -> log.info("found {}", row));
 
-        ExampleMatcher matcher = ExampleMatcher.matching().withMatcher("name", exact());
+        ExampleMatcher matcher = ExampleMatcher.matching()
+                .withIgnorePaths("price")
+                .withMatcher("name", exact())
+                //.withMatcher("price", exact())
+                ;
+        Coffee criteria = Coffee.builder()
+                .price(200) // 为啥即使Matcher里面没有price，只要object设了，还会去match呢？一定要显式Ignore？
+                .name("espresso")
+                .build();
         Optional<Coffee> result =
-                coffeeMongodbRepository.findOne(Example.of(Coffee.builder().name("espresso").build(), matcher));
+                coffeeMongodbRepository.findOne(Example.of(criteria, matcher));
 
         assertTrue(result.isPresent());
         assertEquals(espresso.getPrice(), result.get().getPrice());
+        log.info("found {}", result.get());
 
     }
 

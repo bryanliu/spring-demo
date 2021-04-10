@@ -21,7 +21,7 @@ public class Coffee {
 
     private String name;
 
-    private int price;
+    private Integer price;
 
     private Date createTime;
 
