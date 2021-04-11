@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import lombok.extern.slf4j.Slf4j;
@@ -135,5 +136,30 @@ public class LambdaPractice {
         boolean nonmatch = Stream.of(1, 2, 3).noneMatch(p -> p > 10);
         assertTrue(nonmatch);
 
+    }
+
+
+    @Test
+    @Disabled
+    void testParallar() {
+        /**
+         * 如果执行时间很短的话，并行计算时间不一定缩短，因为线程切换需要时间
+         * 下面实例sleep 200 ms, 效果就出来了。
+         * 所以多线程使用也要分场景
+         * 并行2s，串行20s
+         */
+        int res = IntStream.rangeClosed(1, 100)
+                .parallel()
+                .peek(e -> {
+                    //log.info("{}", e);
+                    try {
+                        Thread.sleep(200);
+                    } catch (InterruptedException interruptedException) {
+                        interruptedException.printStackTrace();
+                    }
+                })
+                .map(n -> n*n)
+                .max().getAsInt();
+        log.info("{}", res);
     }
 }
