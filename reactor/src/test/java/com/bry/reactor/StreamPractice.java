@@ -18,7 +18,7 @@ import org.junit.jupiter.api.Test;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class LambdaPractice {
+public class StreamPractice {
 
     /**
      * 由于Reactor模式要用到很多Lambda和Stream的方式，这儿先练习一下。
