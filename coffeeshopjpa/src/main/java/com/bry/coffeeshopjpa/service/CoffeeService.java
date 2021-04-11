@@ -57,7 +57,7 @@ public class CoffeeService {
         coffeeRepository.deleteByName(name);
     }
 
-    //@Cacheable
+    @Cacheable()
     public List<Coffee> getAllCofffees() {
         return coffeeRepository.findAll();
     }
