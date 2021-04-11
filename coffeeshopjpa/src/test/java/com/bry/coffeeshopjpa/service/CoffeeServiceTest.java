@@ -45,9 +45,11 @@ public class CoffeeServiceTest {
         /**
          * 这个测试主要用来测试JVM缓存的效果，如果没有缓存，都要从数据库读取，1000次循环，大概要1秒钟的时间
          * 如果开启了缓存，只要145 ms，即使到1W次，时间也差不多。
+         * 改成Redis之后10000行明显慢了很多，大概要12s左右，一方面是本地的redis 性能有限，网络开销也不可忽视。
+         * 而且之前都是内存数据库，内存缓存，所以速度会快很多。
          */
 
-        for (int i = 0; i < 10000; i++) {
+        for (int i = 0; i < 10; i++) {
             List<Coffee> coffees = coffeeService.getAllCofffees();
         }
 
