@@ -37,6 +37,7 @@ public class OrderServiceTest {
 
     @Test
     public void testGetALlOrders() {
+        //arrange mock
         CoffeeOrder co1 = CoffeeOrder.builder().customer("Someone").state(OrderState.INIT)
                 .items(Arrays.asList(
                         Coffee.builder().name("coffee1").price(20).build(),
@@ -45,12 +46,12 @@ public class OrderServiceTest {
 
         // 设置findAll() 的时候返回的数据
         when(coffeeOrderRepository.findAll()).thenReturn(Arrays.asList(co1));
-        //执行调用方法
+        //invoke 执行调用方法
         List<CoffeeOrder> res = coffeeOrderService.getAllOrders();
-        //验证方法被调用一次
+
+        //verify 验证方法被调用一次
         verify(coffeeOrderRepository).findAll(); // 这种写法和下面等价，默认就是1次。
         // verify(coffeeOrderRepository,times(1)).findAll();
-
         assertEquals(1, res.size());
         assertEquals(2, res.get(0).getItems().size());
         assertEquals("Someone", res.get(0).getCustomer());
@@ -59,17 +60,17 @@ public class OrderServiceTest {
 
     @Test
     void testSaveCoffeeOrder() {
+        //arrange mock
         List<Coffee> coffeeList = Arrays.asList(
                 Coffee.builder().name("coffee1").price(20).build(),
                 Coffee.builder().name("coffee2").price(30).build()
         );
-        CoffeeOrder co1 = CoffeeOrder.builder().customer("Someone").state(OrderState.INIT)
-                .items(Arrays.asList(
-
-                )).build();
         when(coffeeService.findCoffeeByNames(anyList())).thenReturn(coffeeList);
 
+        //invoke
         coffeeOrderService.saveCoffeeOrder("Someone", Arrays.asList("coffee1", "coffee2"));
+
+        //Verify
         verify(coffeeService).findCoffeeByNames(anyList());
 
         // 获取依赖方法被调用的参数，这样我们可以验证调用目标方法之后，参数是不是期望的。
@@ -84,7 +85,7 @@ public class OrderServiceTest {
     }
 
     @Test
-    public void testDelete(){
+    public void testDelete() {
 
         coffeeOrderService.deleteOrder(12);
         verify(coffeeOrderRepository).deleteById(12);
