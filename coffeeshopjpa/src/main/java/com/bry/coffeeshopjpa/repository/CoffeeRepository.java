@@ -18,5 +18,12 @@ public interface CoffeeRepository extends JpaRepository<Coffee, Integer> {
     )
     List<Coffee> listAllCoffees();
 
+    /**
+     * 这个 NameIn 中的 In 很关键，有了它就变成了IN查找了。
+     * @param names
+     * @return
+     */
+    List<Coffee> findCoffeeByNameInOrderById(List<String> names);
+
     void deleteByName(String name);
 }

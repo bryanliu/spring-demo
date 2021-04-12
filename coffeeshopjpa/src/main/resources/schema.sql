@@ -28,8 +28,8 @@ create table t_order
 create table t_coffee_order
 (
     coffee_order_id int not null,
-    item_id         int not null,
-    primary key (coffee_order_id, item_id)
+    items_id         int not null,
+    primary key (coffee_order_id, items_id)
 
 );
 insert into t_coffee(name, price, create_time, update_time)

@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.springframework.data.domain.ExampleMatcher.GenericPropertyMatchers.exact;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -164,4 +165,12 @@ public class CoffeeRepositoryTest {
 
     }
 
+    @Test
+    void testFindCoffeeByNameInOrderById() {
+
+        List<Coffee> coffees = coffeeRepository
+                .findCoffeeByNameInOrderById(Arrays.asList("latte", "espresso"));
+        assertEquals(2, coffees.size());
+
+    }
 }
