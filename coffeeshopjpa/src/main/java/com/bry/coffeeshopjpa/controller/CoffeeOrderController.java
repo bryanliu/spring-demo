@@ -27,15 +27,14 @@ public class CoffeeOrderController {
     @PostMapping("/order")
     public CoffeeOrder makeOrder(@RequestBody OrderRequest request) {
 
-        Coffee[] coffees = coffeeService.findCoffeeByNames(request.getItems()).toArray(new Coffee[] {});
 
-        return coffeeOrderService.saveCoffeeOrder(request.getCustomer(), coffees);
+        return coffeeOrderService.saveCoffeeOrder(request.getCustomer(), request.getItems());
 
     }
 
     @GetMapping("/all")
     public List<CoffeeOrder> getAllOrders() {
-        return coffeeOrderService.getALlOrders();
+        return coffeeOrderService.getAllOrders();
     }
 
     @DeleteMapping("/")

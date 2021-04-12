@@ -1,6 +1,5 @@
 package com.bry.coffeeshopjpa.service;
 
-import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,9 +15,13 @@ public class CoffeeOrderService {
 
     @Autowired CoffeeOrderRepository cor;
 
-    public CoffeeOrder saveCoffeeOrder(String customer, Coffee... coffee) {
+    @Autowired CoffeeService coffeeService;
 
-        CoffeeOrder order = CoffeeOrder.builder().customer(customer).items(Arrays.asList(coffee))
+    public CoffeeOrder saveCoffeeOrder(String customer, List<String> coffeeItems) {
+
+        List<Coffee> coffees = coffeeService.findCoffeeByNames(coffeeItems);
+
+        CoffeeOrder order = CoffeeOrder.builder().customer(customer).items(coffees)
                 .state(OrderState.INIT)
                 .build();
         cor.save(order);
@@ -26,7 +29,7 @@ public class CoffeeOrderService {
         return order;
     }
 
-    public List<CoffeeOrder> getALlOrders() {
+    public List<CoffeeOrder> getAllOrders() {
 
         return cor.findAll();
     }
