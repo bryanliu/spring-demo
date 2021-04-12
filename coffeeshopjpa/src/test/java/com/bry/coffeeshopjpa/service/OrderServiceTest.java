@@ -2,6 +2,9 @@ package com.bry.coffeeshopjpa.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -55,6 +58,23 @@ public class OrderServiceTest {
         assertEquals(1, res.size());
         assertEquals(2, res.get(0).getItems().size());
         assertEquals("Someone", res.get(0).getCustomer());
+
+    }
+
+    @Test
+    public void testGetAllOrdersBDD() {
+        //arrange mock
+        CoffeeOrder co1 = CoffeeOrder.builder().customer("Someone").state(OrderState.INIT)
+                .items(Arrays.asList(
+                        Coffee.builder().name("coffee1").price(20).build(),
+                        Coffee.builder().name("coffee2").price(30).build()
+                )).build();
+        given(coffeeOrderRepository.findAll()).willReturn(Arrays.asList(co1));
+
+        List<CoffeeOrder> res = coffeeOrderService.getAllOrders();
+
+        then(coffeeOrderRepository).should(times(1)).findAll();
+        then(coffeeOrderRepository).shouldHaveNoMoreInteractions();
 
     }
 
