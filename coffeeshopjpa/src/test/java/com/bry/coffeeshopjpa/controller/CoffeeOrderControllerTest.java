@@ -5,7 +5,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -73,9 +73,9 @@ class CoffeeOrderControllerTest {
         mvc.perform(get("/coffee/all")
                 .param("foo", "value")
                 .param("bar", "value")
-                .accept(APPLICATION_JSON_UTF8_VALUE))
+                .accept(APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(content().contentType(APPLICATION_JSON))
                 //.andExpect(content().string("hello"))
                 .andExpect(jsonPath("$[0].name").value("摩卡"))
                 .andExpect(jsonPath("$[0].price").value("100"))
@@ -95,7 +95,7 @@ class CoffeeOrderControllerTest {
         //json.
         //cjson.toJSONString()
         mvc.perform(post("/coffee/")
-                .contentType(APPLICATION_JSON_UTF8_VALUE)
+                .contentType(APPLICATION_JSON)
                 .content(g.toJson(coffee)))
                 .andExpect(status().isOk())
                 //.andExpect(content().contentType(APPLICATION_JSON_UTF8_VALUE))
@@ -109,8 +109,8 @@ class CoffeeOrderControllerTest {
 
         mvc.perform(
                 post("/coffee/")
-                .contentType(APPLICATION_JSON_UTF8_VALUE)
-                .content("")
+                        .contentType(APPLICATION_JSON)
+                        .content("")
         )
                 .andExpect(status().isBadRequest())
                 .andDo(print());
@@ -122,7 +122,7 @@ class CoffeeOrderControllerTest {
 
         mvc.perform(
                 post("/coffee/")
-                        .contentType(APPLICATION_JSON_UTF8_VALUE)
+                        .contentType(APPLICATION_JSON)
                         .content("{'name:'abc'}")
         )
                 .andExpect(status().isBadRequest())
