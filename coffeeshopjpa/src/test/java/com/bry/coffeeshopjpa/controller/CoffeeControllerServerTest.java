@@ -48,7 +48,7 @@ public class CoffeeControllerServerTest {
       port 是运行期注入的，但是在静态方法里面没法引用到 以及 和 url 组合起来
      */
     void beforeAll() {
-        url = url + port;
+        url += port;
     }
 
     @BeforeEach
