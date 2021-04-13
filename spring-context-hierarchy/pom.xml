@@ -11,7 +11,7 @@
 	<groupId>com.example</groupId>
 	<artifactId>context</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>context</name>
+	<name>Spring context hierarchy</name>
 	<description>Demo project for Spring Boot Context Hierarchy</description>
 	<properties>
 		<java.version>1.8</java.version>
@@ -20,6 +20,10 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-aop</artifactId>
 		</dependency>
 
 		<dependency>
