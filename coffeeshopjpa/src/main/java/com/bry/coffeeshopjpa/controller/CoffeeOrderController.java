@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.bry.coffeeshopjpa.controller.request.OrderRequest;
-import com.bry.coffeeshopjpa.model.Coffee;
 import com.bry.coffeeshopjpa.model.CoffeeOrder;
 import com.bry.coffeeshopjpa.service.CoffeeOrderService;
 import com.bry.coffeeshopjpa.service.CoffeeService;
@@ -27,7 +26,6 @@ public class CoffeeOrderController {
     @PostMapping("/order")
     public CoffeeOrder makeOrder(@RequestBody OrderRequest request) {
 
-
         return coffeeOrderService.saveCoffeeOrder(request.getCustomer(), request.getItems());
 
     }
@@ -38,7 +36,7 @@ public class CoffeeOrderController {
     }
 
     @DeleteMapping("/")
-    public void delete(@RequestParam Integer id){
+    public void delete(@RequestParam Integer id) {
         coffeeOrderService.deleteOrder(id);
     }
 
