@@ -12,17 +12,21 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.bry.coffeeshopjpa.model.Coffee;
 import com.bry.coffeeshopjpa.model.CoffeeOrder;
 import com.bry.coffeeshopjpa.model.OrderState;
 import com.bry.coffeeshopjpa.repository.CoffeeOrderRepository;
 
-@SpringBootTest
+//@SpringBootTest
+// 可以用下面的方法，避免加载Spring上下文
+@ExtendWith(MockitoExtension.class) //Junit 5
+//@RunWith(MockitoJUnitRunner.class) //Junit 4
 public class OrderServiceTest {
 
     /**
