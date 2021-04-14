@@ -127,7 +127,6 @@ class CoffeeOrderControllerMockMVCTest {
 
         @Test
         void testGetCoffeeNotExists() throws Exception {
-            Coffee coffee = Coffee.builder().name("test1").price(200).build();
             given(coffeeService.getCoffeeByName(any())).willReturn(Optional.empty());
 
             mvc.perform(get("/coffee/notexists"))
