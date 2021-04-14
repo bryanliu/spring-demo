@@ -1,6 +1,7 @@
 package com.bry.coffeeshopjpa.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.times;
@@ -15,6 +16,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -108,6 +110,31 @@ class CoffeeOrderControllerMockMVCTest {
                     .andDo(print());
             verify(coffeeService, times(1)).addCoffee(coffee);
 
+        }
+
+        @Test
+        void testGetCoffeeExists() throws Exception {
+            Coffee coffee = Coffee.builder().name("test1").price(200).build();
+            given(coffeeService.getCoffeeByName(any())).willReturn(Optional.ofNullable(coffee));
+
+            mvc.perform(get("/coffee/exists"))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.name").value("test1"))
+                    .andExpect(jsonPath("$.price").value("200"))
+                    .andDo(print())
+            ;
+        }
+
+        @Test
+        void testGetCoffeeNotExists() throws Exception {
+            Coffee coffee = Coffee.builder().name("test1").price(200).build();
+            given(coffeeService.getCoffeeByName(any())).willReturn(Optional.empty());
+
+            mvc.perform(get("/coffee/notexists"))
+                    .andExpect(status().isOk())
+                    .andExpect(content().string(""))
+                    .andDo(print())
+            ;
         }
 
     }
