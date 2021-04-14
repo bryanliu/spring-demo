@@ -1,11 +1,9 @@
 package com.bry.coffeeshopjpa.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -16,10 +14,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -31,7 +26,6 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.bry.coffeeshopjpa.model.Coffee;
 import com.bry.coffeeshopjpa.service.CoffeeService;
-import com.google.gson.Gson;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -87,72 +81,6 @@ class CoffeeOrderControllerMockMVCTest {
                 .andExpect(jsonPath("$[1].price").value("200"))
                 //.andExpect(jsonPath("$..name").value("200")) //  ["摩卡","c2"] 获得所有的Name
                 .andDo(print());
-    }
-
-    @Nested
-    @DisplayName("coffee related test")
-    class CoffeeTest{
-
-        @Test
-        void testAddCoffeeSuccess() throws Exception {
-
-            Coffee coffee = Coffee.builder().name("test1").price(200).build();
-
-            Gson g = new Gson();
-            log.info(g.toJson(coffee));
-            //json.
-            //cjson.toJSONString()
-            mvc.perform(post("/coffee/")
-                    .contentType(APPLICATION_JSON)
-                    .content(g.toJson(coffee)))
-                    .andExpect(status().isCreated())
-                    //.andExpect(content().contentType(APPLICATION_JSON_UTF8_VALUE))
-                    .andDo(print());
-            verify(coffeeService, times(1)).addCoffee(coffee);
-
-        }
-
-        @Test
-        void testGetCoffeeExists() throws Exception {
-            Coffee coffee = Coffee.builder().name("test1").price(200).build();
-            given(coffeeService.getCoffeeByName(any())).willReturn(Optional.ofNullable(coffee));
-
-            mvc.perform(get("/coffee/exists"))
-                    .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.name").value("test1"))
-                    .andExpect(jsonPath("$.price").value("200"))
-                    .andDo(print())
-            ;
-        }
-
-        @Test
-        void testGetCoffeeNotExists() throws Exception {
-            given(coffeeService.getCoffeeByName(any())).willReturn(Optional.empty());
-
-            mvc.perform(get("/coffee/notexists"))
-                    .andExpect(status().isOk())
-                    .andExpect(content().string(""))
-                    .andDo(print())
-            ;
-        }
-
-        @Test
-        void testGetCoffeeByParamExists() throws Exception {
-            Coffee coffee = Coffee.builder().name("test1").price(200).build();
-            given(coffeeService.getCoffeeByName(any())).willReturn(Optional.ofNullable(coffee));
-
-            mvc.perform(get("/coffee/")
-                    .param("name", "exists")
-            )
-                    .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.name").value("test1"))
-                    .andExpect(jsonPath("$.price").value("200"))
-                    .andDo(print())
-            ;
-
-            then(coffeeService).should(times(1)).getCoffeeByName("exists");
-        }
-
     }
 
     @Test
