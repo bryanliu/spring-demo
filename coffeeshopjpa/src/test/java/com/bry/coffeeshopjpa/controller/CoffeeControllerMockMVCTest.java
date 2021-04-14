@@ -116,6 +116,28 @@ public class CoffeeControllerMockMVCTest {
     }
 
     @Test
+    void testAddCoffeeWithMoneyTypeAndFormTypeInvalid() throws Exception {
+        // name is null
+        mvc.perform(post("/coffee/addcoffeewithmoney")
+                //.param("name", "american")
+                .param("price", "10.00")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)//以Form的方式调用
+        )
+                .andExpect(status().isBadRequest())
+                .andDo(print());
+
+        // price is null
+        mvc.perform(post("/coffee/addcoffeewithmoney")
+                .param("name", "american")
+                //.param("price", "10.00")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)//以Form的方式调用
+        )
+                .andExpect(status().isBadRequest())
+                .andDo(print());
+
+    }
+
+    @Test
     @Disabled
     void testAddCoffeeWithMoneyTypeWithRequestBody() throws Exception {
         /*

@@ -3,11 +3,14 @@ package com.bry.coffeeshopjpa.controller;
 import java.util.Date;
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.joda.money.CurrencyUnit;
 import org.joda.money.Money;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -80,7 +83,7 @@ public class CoffeeController {
     @PostMapping(value = "/addcoffeewithmoney",
             consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     @ResponseBody
-    public CoffeeRequest addCoffeeWithMoneyType(CoffeeRequest coffee) {
+    public CoffeeRequest addCoffeeWithMoneyType(@Valid CoffeeRequest coffee) {
         // 只是用来演示，就不调用数据库了
         Coffee c = Coffee.builder()
                 .name(coffee.getName())
