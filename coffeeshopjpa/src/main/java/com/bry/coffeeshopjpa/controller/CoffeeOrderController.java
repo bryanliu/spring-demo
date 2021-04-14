@@ -20,7 +20,6 @@ import com.bry.coffeeshopjpa.service.CoffeeService;
 @RequestMapping("/order")
 public class CoffeeOrderController {
 
-    @Autowired CoffeeService coffeeService;
     @Autowired CoffeeOrderService coffeeOrderService;
 
     @PostMapping("/order")
