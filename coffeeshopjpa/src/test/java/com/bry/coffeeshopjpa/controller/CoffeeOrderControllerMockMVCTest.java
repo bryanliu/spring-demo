@@ -136,6 +136,23 @@ class CoffeeOrderControllerMockMVCTest {
             ;
         }
 
+        @Test
+        void testGetCoffeeByParamExists() throws Exception {
+            Coffee coffee = Coffee.builder().name("test1").price(200).build();
+            given(coffeeService.getCoffeeByName(any())).willReturn(Optional.ofNullable(coffee));
+
+            mvc.perform(get("/coffee/")
+                    .param("name", "exists")
+            )
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.name").value("test1"))
+                    .andExpect(jsonPath("$.price").value("200"))
+                    .andDo(print())
+            ;
+
+            then(coffeeService).should(times(1)).getCoffeeByName("exists");
+        }
+
     }
 
     @Test
