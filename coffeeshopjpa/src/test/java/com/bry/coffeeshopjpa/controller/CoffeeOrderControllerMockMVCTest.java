@@ -16,6 +16,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.util.Arrays;
 import java.util.List;
 
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -35,7 +37,7 @@ import lombok.extern.slf4j.Slf4j;
 @ExtendWith(MockitoExtension.class)
 @AutoConfigureMockMvc //不启动服务器,使用mockMvc进行测试http请求。启动了完整的Spring应用程序上下文，但没有启动服务器
 @Slf4j
-class CoffeeOrderControllerTest {
+class CoffeeOrderControllerMockMVCTest {
 
     @MockBean
     CoffeeService coffeeService;
@@ -85,22 +87,28 @@ class CoffeeOrderControllerTest {
                 .andDo(print());
     }
 
-    @Test
-    void testAddCoffeeSuccess() throws Exception {
+    @Nested
+    @DisplayName("coffee related test")
+    class CoffeeTest{
 
-        Coffee coffee = Coffee.builder().name("test1").price(200).build();
+        @Test
+        void testAddCoffeeSuccess() throws Exception {
 
-        Gson g = new Gson();
-        log.info(g.toJson(coffee));
-        //json.
-        //cjson.toJSONString()
-        mvc.perform(post("/coffee/")
-                .contentType(APPLICATION_JSON)
-                .content(g.toJson(coffee)))
-                .andExpect(status().isOk())
-                //.andExpect(content().contentType(APPLICATION_JSON_UTF8_VALUE))
-                .andDo(print());
-        verify(coffeeService, times(1)).addCoffee(coffee);
+            Coffee coffee = Coffee.builder().name("test1").price(200).build();
+
+            Gson g = new Gson();
+            log.info(g.toJson(coffee));
+            //json.
+            //cjson.toJSONString()
+            mvc.perform(post("/coffee/")
+                    .contentType(APPLICATION_JSON)
+                    .content(g.toJson(coffee)))
+                    .andExpect(status().isCreated())
+                    //.andExpect(content().contentType(APPLICATION_JSON_UTF8_VALUE))
+                    .andDo(print());
+            verify(coffeeService, times(1)).addCoffee(coffee);
+
+        }
 
     }
 
