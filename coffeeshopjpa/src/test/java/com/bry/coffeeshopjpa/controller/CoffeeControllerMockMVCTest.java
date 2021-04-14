@@ -6,6 +6,7 @@ import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.fileUpload;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -24,6 +25,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.bry.coffeeshopjpa.model.Coffee;
@@ -152,4 +154,23 @@ public class CoffeeControllerMockMVCTest {
                 .andDo(print());
 
     }
+
+    /*
+    跑通了一个文件上传的例子，注意看Controller 里面的实现
+     */
+    @Test
+    public void testUploadCoffees() throws Exception {
+
+        mvc.perform(fileUpload("/coffee/upload")
+                .file(
+                        new MockMultipartFile("file", "test", "application/txt",
+                                //new FileInputStream("coffeeuploadtest.txt")
+                                //注意看是如何从Classpath获取文件的
+                                getClass().getResourceAsStream("/coffeeuploadtest.txt")
+                        )))
+                .andExpect(status().isOk())
+                .andDo(print());
+
+    }
+
 }

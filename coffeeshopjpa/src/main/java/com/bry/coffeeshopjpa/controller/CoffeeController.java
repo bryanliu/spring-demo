@@ -1,16 +1,17 @@
 package com.bry.coffeeshopjpa.controller;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Date;
 import java.util.List;
-
 import javax.validation.Valid;
 
-import org.joda.money.CurrencyUnit;
+import org.apache.commons.lang3.StringUtils;
 import org.joda.money.Money;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,13 +21,17 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.bry.coffeeshopjpa.controller.request.CoffeeRequest;
 import com.bry.coffeeshopjpa.model.Coffee;
 import com.bry.coffeeshopjpa.service.CoffeeService;
 
+import lombok.extern.slf4j.Slf4j;
+
 @RestController
 @RequestMapping("/coffee")
+@Slf4j
 public class CoffeeController {
 
     @Autowired CoffeeService coffeeService;
@@ -115,5 +120,26 @@ public class CoffeeController {
                 .build();
 
         return resp;
+    }
+
+    @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public void uploadCoffee(@RequestParam("file") MultipartFile file) {
+
+        if (file != null) {
+            try (BufferedReader is = new BufferedReader(new InputStreamReader(file.getInputStream()))) {
+
+                String str;
+                while ((str = is.readLine()) != null) {
+                    String[] splites = StringUtils.split(str);
+                    if (splites != null && splites.length == 2) {
+                        log.info("got coffee {}", str);
+                        //Demo 演示效果，不调用Service了。
+                    }
+                }
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }
