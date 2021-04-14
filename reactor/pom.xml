@@ -11,7 +11,7 @@
 	<groupId>com.bry</groupId>
 	<artifactId>reactor</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>reactor</name>
+	<name>reactor demo</name>
 	<description>Nosql demo</description>
 	<properties>
 		<java.version>1.8</java.version>
