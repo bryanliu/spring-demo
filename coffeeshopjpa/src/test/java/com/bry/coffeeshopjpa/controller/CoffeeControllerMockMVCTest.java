@@ -139,6 +139,7 @@ public class CoffeeControllerMockMVCTest {
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)//以Form的方式调用
         )
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$.price").value(10.00))
                 .andDo(print());
 
     }
@@ -166,7 +167,7 @@ public class CoffeeControllerMockMVCTest {
     }
 
     @Test
-    @Disabled
+    //@Disabled
     void testAddCoffeeWithMoneyTypeWithRequestBody() throws Exception {
         /*
         这种方式的Convert还是有问题，会抛出无法映射，看后续能否解决
