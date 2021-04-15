@@ -6,8 +6,8 @@ import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.fileUpload;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -68,7 +68,9 @@ public class CoffeeControllerMockMVCTest {
         Coffee coffee = Coffee.builder().name("test1").price(200).build();
         given(coffeeService.getCoffeeByName(any())).willReturn(Optional.ofNullable(coffee));
 
-        mvc.perform(get("/coffee/exists"))
+        mvc.perform(get("/coffee/exists")
+                .accept(APPLICATION_JSON)
+        )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("test1"))
                 .andExpect(jsonPath("$.price").value("200"))
@@ -160,14 +162,13 @@ public class CoffeeControllerMockMVCTest {
      */
     @Test
     public void testUploadCoffees() throws Exception {
-
-        mvc.perform(fileUpload("/coffee/upload")
-                .file(
-                        new MockMultipartFile("file", "test", "application/txt",
-                                //new FileInputStream("coffeeuploadtest.txt")
-                                //注意看是如何从Classpath获取文件的
-                                getClass().getResourceAsStream("/coffeeuploadtest.txt")
-                        )))
+        //mvc.perform(fileUpload("/coffee/upload") //升级为multipart
+        mvc.perform(multipart("/coffee/upload")
+                .file(new MockMultipartFile("file", "test", "application/txt",
+                        //new FileInputStream("coffeeuploadtest.txt")
+                        //注意看是如何从Classpath获取文件的
+                        getClass().getResourceAsStream("/coffeeuploadtest.txt")
+                )))
                 .andExpect(status().isOk())
                 .andDo(print());
 
