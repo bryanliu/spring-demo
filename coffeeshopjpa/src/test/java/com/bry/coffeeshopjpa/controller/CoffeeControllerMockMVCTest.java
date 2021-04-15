@@ -1,5 +1,8 @@
 package com.bry.coffeeshopjpa.controller;
 
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.endsWith;
+import static org.hamcrest.Matchers.startsWith;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
@@ -13,6 +16,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.xpath;
 
 import java.util.Optional;
 
@@ -100,6 +104,26 @@ public class CoffeeControllerMockMVCTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("test1"))
                 .andExpect(jsonPath("$.price").value("200"))
+                .andDo(print())
+        ;
+
+        then(coffeeService).should(times(1)).getCoffeeByName("exists");
+    }
+
+    @Test
+    void testGetCoffeeByParamExistsXML() throws Exception {
+        Coffee coffee = Coffee.builder().name("test1").price(200).build();
+        given(coffeeService.getCoffeeByName(any())).willReturn(Optional.ofNullable(coffee));
+
+        mvc.perform(get("/coffee/")
+                .param("name", "exists")
+                .accept(MediaType.APPLICATION_XML)
+        )
+                .andExpect(status().isOk())
+                //这里面放的也是Harmcrest的Matcher
+                .andExpect(content().string(containsString("<Coffee><name>test1</name>")))
+                .andExpect(xpath("/Coffee/price").string("200"))
+                //具体jsonpath 和 xpath的使用，请参考 https://goessner.net/articles/JsonPath/
                 .andDo(print())
         ;
 
