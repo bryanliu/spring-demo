@@ -20,6 +20,7 @@ public interface CoffeeRepository extends JpaRepository<Coffee, Integer> {
 
     /**
      * 这个 NameIn 中的 In 很关键，有了它就变成了IN查找了。
+     *
      * @param names
      * @return
      */

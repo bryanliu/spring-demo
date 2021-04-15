@@ -10,7 +10,6 @@ import org.joda.money.Money;
 import org.springframework.format.Formatter;
 import org.springframework.stereotype.Component;
 
-import lombok.extern.log4j.Log4j;
 import lombok.extern.slf4j.Slf4j;
 
 /**

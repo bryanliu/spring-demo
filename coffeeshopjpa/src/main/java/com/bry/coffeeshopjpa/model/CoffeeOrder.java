@@ -3,7 +3,6 @@ package com.bry.coffeeshopjpa.model;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -13,9 +12,7 @@ import javax.persistence.OrderBy;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.ManyToAny;
 import org.hibernate.annotations.UpdateTimestamp;
-import org.springframework.core.annotation.Order;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,7 +24,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name="t_order")
+@Table(name = "t_order")
 public class CoffeeOrder {
 
     @Id
@@ -38,7 +35,7 @@ public class CoffeeOrder {
 
     //@ManyToMany(fetch = FetchType.EAGER)
     @ManyToMany()
-    @JoinTable(name="t_coffee_order")
+    @JoinTable(name = "t_coffee_order")
     @OrderBy("id")
     List<Coffee> items;
 

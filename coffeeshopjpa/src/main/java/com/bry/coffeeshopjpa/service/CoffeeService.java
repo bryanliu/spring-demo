@@ -62,7 +62,7 @@ public class CoffeeService {
         return coffeeRepository.findAll();
     }
 
-    public List<Coffee> findCoffeeByNames(List<String> names){
+    public List<Coffee> findCoffeeByNames(List<String> names) {
         return coffeeRepository.findCoffeeByNameInOrderById(names);
     }
 }
