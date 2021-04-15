@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.util.Date;
 import java.util.List;
 import javax.validation.Valid;
+import javax.validation.ValidationException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.joda.money.Money;
@@ -141,5 +142,15 @@ public class CoffeeController {
                 e.printStackTrace();
             }
         }
+    }
+
+    /**
+     * 别太关注这个路径，主要是用来演示错误处理。  <br/>
+     * 错误处理在 @see {@link GlobalControllerExceptionHandler} 中统一处理。
+     */
+    @GetMapping("/exception")
+    public void getException() {
+        log.info("will throw a exception from this method");
+        throw new ValidationException("What ever");
     }
 }

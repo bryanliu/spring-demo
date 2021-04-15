@@ -1,8 +1,6 @@
 package com.bry.coffeeshopjpa.controller;
 
 import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.endsWith;
-import static org.hamcrest.Matchers.startsWith;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
@@ -20,7 +18,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.Optional;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -167,7 +164,7 @@ public class CoffeeControllerMockMVCTest {
     }
 
     @Test
-    //@Disabled
+        //@Disabled
     void testAddCoffeeWithMoneyTypeWithRequestBody() throws Exception {
         /*
         这种方式的Convert还是有问题，会抛出无法映射，看后续能否解决
@@ -196,6 +193,18 @@ public class CoffeeControllerMockMVCTest {
                 )))
                 .andExpect(status().isOk())
                 .andDo(print());
+
+    }
+
+    @Test
+    void testGetCoffeeWithException() throws Exception {
+
+        mvc.perform(get("/coffee/exception")
+        )
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("What ever"))
+                .andDo(print())
+        ;
 
     }
 
