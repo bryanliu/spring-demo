@@ -59,8 +59,12 @@ public class CoffeeController {
      * @return Coffee
      */
     @GetMapping("/{name}")
-    public Coffee getCoffee(@PathVariable String name) {
+    public Coffee getCoffee(
+            @PathVariable String name,
+            @RequestParam(required = false) String id //设置为可选参数
+    ) {
 
+        log.info("Get coffee name {}, id {}", name, id);
         return coffeeService.getCoffeeByName(name).orElse(null);
 
     }
