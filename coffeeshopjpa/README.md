@@ -111,18 +111,24 @@ ExampleMatcher matcher = ExampleMatcher.matching().withMatcher("name", exact());
 Optional<Coffee> result = coffeeRepository.findOne(Example.of(Coffee.builder().name(name).build(), matcher));
 ```
 当然也可以自定义有语义的方法甚至写SQL
+
+<details>
+<summary>CODE</summary>
+
 ```java
     //根据名字查找，你不需要写实现，JPA自动会根据名字解析
     Coffee findByName(String name);
-    
-    // 写SQL查询
-    @Query(
-            value = "select coffee from Coffee coffee order by coffee.price desc"
-    )
+
+// 写SQL查询
+@Query(
+        value = "select coffee from Coffee coffee order by coffee.price desc"
+)
     List<Coffee> listAllCoffees();
 
-    void deleteByName(String name);
+        void deleteByName(String name);
 ```
+</details>
+
 ## 单元测试
 非常方便吧，如果是简单的场景，也可以考虑一下JPA。生产力满满。
 到这里，一个模型的CRUD就完成了。
@@ -134,6 +140,3 @@ Optional<Coffee> result = coffeeRepository.findOne(Example.of(Coffee.builder().n
 其他数据处理的扩展点包括分页查询，关联查询等，作为**TODO**吧
 
 至于`Service` `Controller` 就可以根据具体需求扩展拉。
-
-
-    
