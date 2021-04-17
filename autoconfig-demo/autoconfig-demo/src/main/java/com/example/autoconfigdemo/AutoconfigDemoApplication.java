@@ -13,7 +13,7 @@ public class AutoconfigDemoApplication {
 		SpringApplication.run(AutoconfigDemoApplication.class, args);
 	}
 
-	@Bean
+	//@Bean
 	public Greeting greeting(){
 		return new Greeting("from created bean in appplication");
 	}
