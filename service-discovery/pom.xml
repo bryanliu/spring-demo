@@ -18,7 +18,7 @@
     <modules>
         <module>coffeeshop-waiter-service</module>
         <module>eureka-server</module>
-
+        <module>coffeeshop-customer</module>
     </modules>
 
     <dependencyManagement>
