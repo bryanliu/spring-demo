@@ -4,19 +4,24 @@
 Euraka Server
 加上Euraka Server的依赖。
 ```xml
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-web</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-netflix-eureka-server</artifactId>
-		</dependency>
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-web</artifactId>
+</dependency>
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-starter-netflix-eureka-server</artifactId>
+</dependency>
 ```
 然后主类上加上 `EnableEurekaServer` 
 配置
 ```properties
+server.port=8761
 
+#Eureka 服务自己不需要注册了
+eureka.client.register-with-eureka=false
+#也不去获取注册的服务
+eureka.client.fetch-registry=false
 ```
 
 就可以作为一个服务启动了。
@@ -24,10 +29,10 @@ Euraka Server
 ## waiter-server
 加上spring cloud 的 dependencyManagement 和 eureka-client dependency
 ```xml
-    <spring-cloud.version>2020.0.2</spring-cloud.version>
-    <!--要在 properties 中加上 spring cloud version-->
+<spring-cloud.version>2020.0.2</spring-cloud.version>
+<!--要在 properties 中加上 spring cloud version-->
 
-	<dependencyManagement>
+<dependencyManagement>
     <dependencies>
         <dependency>
             <groupId>org.springframework.cloud</groupId>
@@ -39,10 +44,10 @@ Euraka Server
     </dependencies>
 </dependencyManagement>
 
-		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
-		</dependency>
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+</dependency>
 ```
 
 主类加上 `@EnableDiscoveryClient`
@@ -57,6 +62,8 @@ Euraka Server
 注册中心的地址暂时先不用配，使用默认`localhost:8761`就可以
 
 ### 运行
-先启动 eureka-server， 再启动 waiter-servie
+先启动 `eureka-server`， 再启动` waiter-servie`
 
-打开 `http://localhost:8761/` 就可以看到Eureka的界面。上面看到有一个服务已经注册上去了。
+打开 `http://localhost:8761/` 就可以看到`Eureka`的界面。上面看到有一个服务已经注册上去了。
+
+然后运行 `waiter-service` 就可以看到 在`euraka` 界面看到了一个注册上去的服务。
