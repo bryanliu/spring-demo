@@ -67,3 +67,4 @@ eureka.client.fetch-registry=false
 打开 `http://localhost:8761/` 就可以看到`Eureka`的界面。上面看到有一个服务已经注册上去了。
 
 然后运行 `waiter-service` 就可以看到 在`euraka` 界面看到了一个注册上去的服务。
+> 试了一下多启动几个相同的服务，不过目前发现eureka 相同名字的服务只有一个，最新的会把原有的踢掉
