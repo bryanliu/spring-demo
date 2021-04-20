@@ -294,3 +294,55 @@ docker run --name consul -d -p 8500:8500 -p 8600:8600/udp consul
 
 对了，不需要再启动`Eureka Server`了
 
+## 附录3 Zookeeper作为服务发现
+### 依赖配置
+Consul作为服务发现的话，改动不大，POM 由`Eureka Client` 改为 `Consul discovery`
+```xml
+<!--		<dependency>-->
+<!--			<groupId>org.springframework.cloud</groupId>-->
+<!--			<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>-->
+<!--		</dependency>-->
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-starter-zookeeper-discovery</artifactId>
+</dependency>
+```
+
+### 加上Consul配置
+```properties
+#Zookeeper 服务注册相关配置
+spring.cloud.zookeeper.connect-string=localhost:2181
+```
+
+### 通过Docker 启动Consul服务
+```shell
+docker run --name zookeeper -p 2181:2181 -d zookeeper:3.5
+```
+相关命令
+```shell
+# 登陆进去
+docker exec -it zookeeper bash
+
+#登进去之后 进入bin，执行
+zkCli.sh #连接到zk
+
+#看到目录里的列表
+ls / 
+>> [services, zookeeper]
+
+#继续执行 
+ls /services/waiter-service
+#可以看到节点的详细信息
+
+ls /services/waiter-service/b1fdcb1e-27a8-4409-a703-3458260c450a
+>>[]
+#说明是一个叶子节点
+
+get /services/waiter-service/b1fdcb1e-27a8-4409-a703-3458260c450a
+>>{"name":"waiter-service","id":"b1fdcb1e-27a8-4409-a703-3458260c450a","address":"10.133.11.150","port":53598,"sslPort":null,"payload":{"@class":"org.springframework.cloud.zookeeper.discovery.ZookeeperInstance","id":"waiter-service","name":"waiter-service","metadata":{"instance_status":"UP"}},"registrationTimeUTC":1618899361271,"serviceType":"DYNAMIC","uriSpec":{"parts":[{"value":"scheme","variable":true},{"value":"://","variable":false},{"value":"address","variable":true},{"value":":","variable":false},{"value":"port","variable":true}]}}
+```
+
+### 启动
+其他都不用改。启动 `waiter service` 和 `customer service` 应该就能正常工作了
+
+对了，不需要再启动`Eureka Server`了
