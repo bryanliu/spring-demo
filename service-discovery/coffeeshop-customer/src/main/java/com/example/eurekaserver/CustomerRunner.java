@@ -38,13 +38,13 @@ public class CustomerRunner implements ApplicationRunner {
 
     @Override public void run(ApplicationArguments args) throws Exception {
 
-        discoveryClient.getInstances("waiter-service")
-                .forEach(s -> log.info("waiter service: hots {} port {}", s.getHost(), s.getPort()));
-        getMenuWithRestTemplateAndLoadBalancer();
-
-        log.info("Get menu by feign client");
-        getMenuWithFeigh();
-        addCoffee();
+//        discoveryClient.getInstances("waiter-service")
+//                .forEach(s -> log.info("waiter service: hots {} port {}", s.getHost(), s.getPort()));
+//        getMenuWithRestTemplateAndLoadBalancer();
+//
+//        log.info("Get menu by feign client");
+//        getMenuWithFeigh();
+//        addCoffee();
     }
 
     void getMenuWithRestTemplateAndLoadBalancer() {

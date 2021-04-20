@@ -7,7 +7,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import com.example.eurekaserver.model.CoffeeOrder;
 import com.example.eurekaserver.model.NewOrderRequest;
 
-@FeignClient(name = "waiter-service", contextId = "coffeeorder", path = "/order")
+@FeignClient(name = "waiter-service", contextId = "coffeeorder", path = "/order",
+fallback = FallbackCoffeeOrderService.class)
 public interface CoffeeOrderService {
 
     @PostMapping("/order")
