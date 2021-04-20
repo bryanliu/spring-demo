@@ -261,3 +261,36 @@ public RestTemplate restTemplate(RestTemplateBuilder builder) {
 }
 ```
 
+## 附录2 Consul作为服务发现
+### 依赖配置
+Consul作为服务发现的话，改动不大，POM 由`Eureka Client` 改为 `Consul discovery`
+```xml
+<!--		<dependency>-->
+<!--			<groupId>org.springframework.cloud</groupId>-->
+<!--			<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>-->
+<!--		</dependency>-->
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-starter-consul-discovery</artifactId>
+</dependency>
+```
+
+### 加上Consul配置
+```properties
+# Consul 服务注册发现相关配置
+spring.cloud.consul.port=8500
+spring.cloud.consul.host=localhost
+spring.cloud.consul.discovery.prefer-ip-address=true
+```
+
+### 通过Docker 启动Consul服务
+```shell
+docker run --name consul -d -p 8500:8500 -p 8600:8600/udp consul
+```
+打开 `localhost:8500` 就能看到consul的控制台
+
+### 启动  
+其他都不用改。启动 `waiter service` 和 `customer service` 应该就能正常工作了
+
+对了，不需要再启动`Eureka Server`了
+
