@@ -86,6 +86,16 @@ eureka.client.fetch-registry=false
 并且作为一个`spring-boot-web`项目
 
 ### restTempate的方式
+#### pom 配置
+由于将底层换为HttpClient，所以要加上依赖
+```xml
+<dependency>
+    <groupId>org.apache.httpcomponents</groupId>
+    <artifactId>httpclient</artifactId>
+    <version>4.5.7</version>
+</dependency>
+```
+#### 配置RestTemplate
 由于之前的课说过，RestTempate没有自动配置，所以需要手动创建一个。
 并且由于要用到Load balance所以标注为 `@Loadbalanced` (如果没有这个标注，用服务名访问会显示找不到)
 ```java
@@ -138,7 +148,14 @@ void getMenu() {
     <artifactId>feign-httpclient</artifactId>
 </dependency>
 ```
-
+> feign **不需要**再加上如下所示的http的依赖
+```xml
+<dependency>
+    <groupId>org.apache.httpcomponents</groupId>
+    <artifactId>httpclient</artifactId>
+    <version>4.5.7</version>
+</dependency>
+```
 #### 写Feign Client的相关接口
 写得和Controller 很像，定义服务名，parent path等。
 
