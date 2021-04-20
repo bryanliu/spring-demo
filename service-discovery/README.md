@@ -1,6 +1,6 @@
 # 服务注册、发现Demo
 这个例子演示了使用Erueka 作为服务发现的服务器，将waiter-servier注册上去
-
+>断路器的练习文档，请参考[README_CircuitBreaker](README_CircuitBreaker.md)
 ## Euraka Server
 
 ### POM 加上Euraka Server的依赖。
