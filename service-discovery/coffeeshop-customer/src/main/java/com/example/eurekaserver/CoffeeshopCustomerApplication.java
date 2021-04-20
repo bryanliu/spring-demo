@@ -22,7 +22,7 @@ import com.example.eurekaserver.support.CustomConnectionKeepAliveStrategy;
 @SpringBootApplication
 @EnableDiscoveryClient
 @EnableFeignClients
-@EnableCircuitBreaker
+//@EnableCircuitBreaker
 public class CoffeeshopCustomerApplication {
 
     public static void main(String[] args) {
