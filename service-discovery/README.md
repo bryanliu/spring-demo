@@ -173,8 +173,9 @@ public interface CoffeeService {
 
 
 #### Applicaiton类加上 @EnableFeignClient
->注意，这在做的时候犯了错，没加上去，结果显示@Autowire 找不到Bean
+>注意：这在做的时候犯了错，没加上去，结果显示@Autowire 找不到Bean
 
+>注意2：还是需要 `@EnableDiscoveryClient` 标准的。
 #### 调用
 Feign Client的调用比 ResetTemplate 简单多了，就像调用Service方法一样。
 ```java
