@@ -140,3 +140,64 @@ Optional<Coffee> result = coffeeRepository.findOne(Example.of(Coffee.builder().n
 其他数据处理的扩展点包括分页查询，关联查询等，作为**TODO**吧
 
 至于`Service` `Controller` 就可以根据具体需求扩展拉。
+
+# 如何使用AOP给方法做切面
+## 声明一个切面类，
+要在里面配置切入点PointCut是什么，Advice是什么，之前，之后还是around  
+这个类要标注为`@Aspect` 并且声明为 `@Component`
+```java
+@Aspect
+@Component
+@Slf4j
+public class PerformanceAspect {
+
+    @Around("repositoryOps()")
+    public Object logPerformance(ProceedingJoinPoint pjp) throws Throwable {
+
+        long startTime = System.currentTimeMillis();
+        String name = pjp.getSignature().toString();
+        try {
+            return pjp.proceed();
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
+            throw throwable;
+        } finally {
+            long endTime = System.currentTimeMillis();
+            log.info("Execute {}, time {}", name, endTime - startTime);
+        }
+
+    }
+
+    @Pointcut("execution(* com.bry.coffeeshopjpa.repository..*(..))")
+    private void repositoryOps() {
+
+    }
+}
+```
+也可以这么定义，表示对于以`testBean` 开头的做切面，切面是返回后执行
+```java
+@Aspect
+@Slf4j
+public class TestAspect {
+
+    @AfterReturning("bean(testBean*)")
+    public void printAfter() {
+        log.info("After hello()");
+    }
+}
+
+```
+
+然后在 `SpringApplication类上面加上` `@EnableAspectJAutoProxy` 可以声明，Spring Boot 做自动配置了。但是作为一个好的习惯，还是要显式写一下。
+
+> 说明： @Aspect 只是沿用Aspectj 的风格，但是后面实现还是AOP，不会引入AspectJ的complier或weaver，说明见[这里](https://docs.spring.io/spring-framework/docs/current/reference/html/core.html#aop-ataspectj)
+
+>更多表达式内容，参考[Spring 文档](https://docs.spring.io/spring-framework/docs/current/reference/html/core.html#aop-pointcuts-examples)  
+>> 以下面表达式为例：   
+>>@Pointcut("execution(* geektime.spring.springbucks.repository..*(..))”)  
+>>语法比较复杂，一般是 `returntype` `名称` `参数 `这三个必选
+名称是可以省略的。  
+>> \* 代表所有  
+>>  .. 代表子路径  
+>>  (..) 代表任意多个参数  
+>>  所以上面的意思是repo 文件夹以及子路径中的所有方法，方法返回参数任意，方法参数任意。
