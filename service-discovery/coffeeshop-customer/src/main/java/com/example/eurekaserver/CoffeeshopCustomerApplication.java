@@ -25,36 +25,24 @@ public class CoffeeshopCustomerApplication {
         SpringApplication.run(CoffeeshopCustomerApplication.class, args);
     }
 
-//    @Bean
-//    public HttpComponentsClientHttpRequestFactory requestFactory() {
-//        PoolingHttpClientConnectionManager connectionManager =
-//                new PoolingHttpClientConnectionManager(30, TimeUnit.SECONDS);
-//        connectionManager.setMaxTotal(200);
-//        connectionManager.setDefaultMaxPerRoute(20);
-//
-//        CloseableHttpClient httpClient = HttpClients.custom()
-//                .setConnectionManager(connectionManager)
-//                .evictIdleConnections(30, TimeUnit.SECONDS)
-//                .disableAutomaticRetries()
-//                // 有 Keep-Alive 认里面的值，没有的话永久有效
-//                //.setKeepAliveStrategy(DefaultConnectionKeepAliveStrategy.INSTANCE)
-//                // 换成自定义的
-//                .setKeepAliveStrategy(new CustomConnectionKeepAliveStrategy())
-//                .build();
-//
-//        HttpComponentsClientHttpRequestFactory requestFactory =
-//                new HttpComponentsClientHttpRequestFactory(httpClient);
-//
-//        return requestFactory;
-//    }
-
     @Bean
     public HttpComponentsClientHttpRequestFactory requestFactory() {
 
-        PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager();
+        PoolingHttpClientConnectionManager connectionManager =
+                new PoolingHttpClientConnectionManager(30, TimeUnit.SECONDS);
+        // 设置 timeToLive 为 30 秒
+
+        connectionManager.setMaxTotal(200); //最大连接数
+        connectionManager.setDefaultMaxPerRoute(20); //每个主机地址的最大连接数
 
         CloseableHttpClient httpClient = HttpClients.custom()
                 .setConnectionManager(connectionManager)
+                .evictIdleConnections(30, TimeUnit.SECONDS)//idel 连接30秒后会关掉
+                .disableAutomaticRetries() //关闭自动重试
+                // 有 Keep-Alive 认里面的值，没有的话永久有效
+                //.setKeepAliveStrategy(DefaultConnectionKeepAliveStrategy.INSTANCE)
+                // 换成自定义的
+                .setKeepAliveStrategy(new CustomConnectionKeepAliveStrategy())//设置为自定义KeepAlive策略，设了一个默认的keep-alive
                 .build();
 
         HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory(httpClient);

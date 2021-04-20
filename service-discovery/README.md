@@ -163,5 +163,41 @@ public RestTemplate restTemplate(RestTemplateBuilder builder) {
 }
 ```
 这是一个比较简单的版本，还可以针对各种策略进行定制，比如keep-alive, 最大连接数等。这个等后面研究吧。
+下面是一个自定义更多配置的版本，都有注释，一看就明白
+```java
+@Bean
+public HttpComponentsClientHttpRequestFactory requestFactory() {
 
+    PoolingHttpClientConnectionManager connectionManager =
+            new PoolingHttpClientConnectionManager(30, TimeUnit.SECONDS);
+    // 设置 timeToLive 为 30 秒
+
+    connectionManager.setMaxTotal(200); //最大连接数
+    connectionManager.setDefaultMaxPerRoute(20); //每个主机地址的最大连接数
+
+    CloseableHttpClient httpClient = HttpClients.custom()
+            .setConnectionManager(connectionManager)
+            .evictIdleConnections(30, TimeUnit.SECONDS)//idel 连接30秒后会关掉
+            .disableAutomaticRetries() //关闭自动重试
+            // 有 Keep-Alive 认里面的值，没有的话永久有效
+            //.setKeepAliveStrategy(DefaultConnectionKeepAliveStrategy.INSTANCE)
+            // 换成自定义的
+            .setKeepAliveStrategy(new CustomConnectionKeepAliveStrategy())//设置为自定义KeepAlive策略，设了一个默认的keep-alive
+            .build();
+
+    HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory(httpClient);
+
+    return requestFactory;
+}
+
+@LoadBalanced
+@Bean
+public RestTemplate restTemplate(RestTemplateBuilder builder) {
+    return builder
+            .setConnectTimeout(Duration.ofMillis(100))
+            .setReadTimeout(Duration.ofMillis(500))
+            .requestFactory(this::requestFactory)
+            .build();
+}
+```
 
