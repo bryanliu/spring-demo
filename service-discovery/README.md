@@ -85,7 +85,7 @@ eureka.client.fetch-registry=false
 `Discovery-Client`
 并且作为一个`spring-boot-web`项目
 
-### restTempate
+### restTempate的方式
 由于之前的课说过，RestTempate没有自动配置，所以需要手动创建一个。
 并且由于要用到Load balance所以标注为 `@Loadbalanced` (如果没有这个标注，用服务名访问会显示找不到)
 ```java
@@ -125,6 +125,48 @@ void getMenu() {
 
 }
 ```
+
+### Feign Client
+#### 加上Feigh Client 的 POM依赖
+```xml
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-starter-openfeign</artifactId>
+</dependency>
+<dependency>
+    <groupId>io.github.openfeign</groupId>
+    <artifactId>feign-httpclient</artifactId>
+</dependency>
+```
+
+#### 写Feign Client的相关接口
+写得和Controller 很像，定义服务名，parent path等。
+
+每个方法都是一个远端调用，要写清楚 path
+```java
+@FeignClient(name="waiter-service", contextId = "coffee", path = "/coffee")
+public interface CoffeeService {
+
+    @GetMapping(path="/all")
+    List<Coffee> getAll();
+}
+```
+注意如果有两个以上的接口标记为 `@FeignClient` 如果不设`contenxtId` 就会出现下面问题
+>The bean 'waiter-service.FeignClientSpecification' could not be registered. A bean with that name has already been defined and overriding is disabled.
+
+
+#### Applicaiton类加上 @EnableFeignClient
+>注意，这在做的时候犯了错，没加上去，结果显示@Autowire 找不到Bean
+
+#### 调用
+Feign Client的调用比 ResetTemplate 简单多了，就像调用Service方法一样。
+```java
+void getMenuWithFeigh() {
+    List<Coffee> coffees = coffeeService.getAll();
+    coffees.forEach(c -> log.info("{}", c));
+}
+```
+
 
 ## 附录1 定制化httpTemplate
 
