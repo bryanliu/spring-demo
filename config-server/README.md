@@ -157,3 +157,48 @@ public class OrderProperties {
 尝试将这段代码拷贝到我的application 类初始化，也不起作用。
 **这个稍后再看吧**
 
+## zookeeper 作为配置中心
+###POM
+将 start-config 去掉，加上 zookeeper-config
+```xml
+<!--		<dependency>-->
+<!--			<groupId>org.springframework.cloud</groupId>-->
+<!--			<artifactId>spring-cloud-starter-config</artifactId>-->
+<!--		</dependency>-->
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-starter-zookeeper-config</artifactId>
+</dependency>
+```
+### config
+加上两个配置，主要是这个配置`spring.config.import`，不加就启动不了
+```properties
+
+spring.config.import=zookeeper:
+spring.cloud.zookeeper.connect-string=localhost:2181
+```
+
+Zookeeper要创建config 节点 和 服务节点，这个是要手动建的  
+下面是一些命令
+```shell
+[zk: localhost:2181(CONNECTED) 2] create /config
+Created /config
+[zk: localhost:2181(CONNECTED) 3] create /config/waiter-service
+Created /config/waiter-service
+[zk: localhost:2181(CONNECTED) 4] create /config/waiter-service/coffee.discount 60
+Created /config/waiter-service/coffee.discount
+[zk: localhost:2181(CONNECTED) 5] get /config/waiter-service/coffee.discount
+60
+[zk: localhost:2181(CONNECTED) 6] set /config/waiter-service/coffee.discount 30
+[zk: localhost:2181(CONNECTED) 7] set /config/waiter-service/coffee.discount 50
+```
+zookeeper 比较好的地方就是他有状态变化感知功能，所以修改zookeeper的值就可以自动应用到服务上
+zookeeper 会监听节点值的变化，如果节点值有变化，会推送到zookeeper客户端上的
+
+### 运行和测试
+运行系统，修改zookeeper 的config的值，在控制台就可以看到如下日志：  
+`Refresh keys changed: [coffee.discount]`
+这个测试也得出一个结论
+* `@Value` 引用的properites可以在启动的时候读到`config server`的值，
+但是无法感知更新
+* `@RefreshScope` 是可以感知到更新的。

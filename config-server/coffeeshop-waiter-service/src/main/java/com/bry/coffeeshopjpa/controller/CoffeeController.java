@@ -168,7 +168,7 @@ public class CoffeeController {
     public String getConfig() {
         //This mapping just used to demo the dynamic configuration
         log.info("This mapping just used to demo the dynamic configuration, coffee prefix {}, coffee discount {}",
-                orderProperties.getPrefix(), discount);
+                orderProperties.getPrefix(), orderProperties.getDiscount());
         return discount.toString();
     }
 }
