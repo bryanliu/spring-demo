@@ -11,6 +11,7 @@ import javax.validation.ValidationException;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.money.Money;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,6 +28,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.bry.coffeeshopjpa.controller.request.CoffeeRequest;
 import com.bry.coffeeshopjpa.model.Coffee;
 import com.bry.coffeeshopjpa.service.CoffeeService;
+import com.bry.coffeeshopjpa.support.OrderProperties;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -36,6 +38,10 @@ import lombok.extern.slf4j.Slf4j;
 public class CoffeeController {
 
     @Autowired CoffeeService coffeeService;
+
+    @Autowired OrderProperties orderProperties;
+
+    @Value("${coffee.discount}") Integer discount;
 
     @GetMapping("/all")
     public List<Coffee> getAllCoffee() {
@@ -156,5 +162,13 @@ public class CoffeeController {
     public void getException() {
         log.info("will throw a exception from this method");
         throw new ValidationException("What ever");
+    }
+
+    @GetMapping("/config")
+    public String getConfig() {
+        //This mapping just used to demo the dynamic configuration
+        log.info("This mapping just used to demo the dynamic configuration, coffee prefix {}, coffee discount {}",
+                orderProperties.getPrefix(), discount);
+        return discount.toString();
     }
 }

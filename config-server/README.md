@@ -105,3 +105,55 @@ coffee.prefix: bry-
 ```
 
 # 应用服务配置
+## POM 
+```xml
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-starter-config</artifactId>
+</dependency>
+```
+
+## 配置
+```properties
+#spring.cloud.config.uri=http://localhost:8888
+# 可以指定URL或者像下面这样在服务发现中找
+spring.cloud.config.discovery.enabled=true
+spring.cloud.config.discovery.service-id=configserver
+# 找不到服务就快速失败
+spring.cloud.config.fail-fast=true
+
+# 最新版本一定要加上这个
+spring.config.import=configserver:
+```
+
+## 程序修改
+可以通过`@Value` 的方式 或者声明一个 @RefreshScope 的方式获得`Config Server`的配置项
+```java
+@Value("${coffee.discount}") Integer discount;
+```
+或者定义一个 Bean，在别的地方注入使用就可以
+```java
+@Component
+@ConfigurationProperties("coffee")
+@RefreshScope
+@Data
+public class OrderProperties {
+
+    Integer discount = 100;
+    String prefix = "springbucks-";
+
+}
+```
+
+### 问题
+这个方案在启动的时候读取没问题，但是在手动刷新的时候出问题了。
+`curl -X POST  http://localhost:8080/actuator/refresh`
+通过这个方法，我期望是能够得到最新的配置项，不过抛了下面的错误：
+
+`org.springframework.cloud.config.client.ConfigServerInstanceProvider$Function has not been registered`
+
+而且我看这个是在`DiscoveryClientConfigServiceBootstrapConfiguration` 初始化的。  
+我断点一下，也没调用这里面的方法，  
+尝试将这段代码拷贝到我的application 类初始化，也不起作用。
+**这个稍后再看吧**
+
