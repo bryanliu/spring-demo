@@ -179,3 +179,99 @@ ab -c 50 -n 200 -p ab_post_data -T "application/json" http://localhost:8080/coff
     }
 ]
 ```
+
+# RateLimit 但是时间内限定请求次数
+## POM 
+POM文件不变
+
+## 代码修改
+这儿我在`Controller`里面又增加了一个方法用来演示`RateLimiter`  
+风格和之前一样，加上一个标注就好了，下面有相关配置
+```java
+    @GetMapping("/allrl")
+    @io.github.resilience4j.ratelimiter.annotation.RateLimiter(name="menu")
+    public List<Coffee> getAllCoffeeRateLimit() {
+        //用来演示rate Limit
+        return coffeeService.getAll();
+
+    }
+```
+
+编程的方式，一样，构造函数中加上`RateLimiterRegistry`
+```java
+    RateLimiter rateLimiter;
+
+public CoffeeController(CircuitBreakerRegistry registry,
+        BulkheadRegistry bulkheadRegistry,
+        RateLimiterRegistry rateLimiterRegistry) {
+        circuitBreaker = registry.circuitBreaker("menu");
+        bulkhead = bulkheadRegistry.bulkhead("menu");
+        rateLimiter = rateLimiterRegistry.rateLimiter("order");
+        }
+
+    @PostMapping("/orderrl")
+    public CoffeeOrder addOrderRL(@RequestBody NewOrderRequest order) {
+        CoffeeOrder res = null;
+        try {
+            res = rateLimiter.executeSupplier(() -> coffeeOrderService.addOrder(order));
+        } catch (RequestNotPermitted e) {
+            log.warn("Request not permitted");
+        }
+
+        return res;
+
+    }
+
+```
+
+## 配置
+```properties
+#rate limit
+resilience4j.ratelimiter.limiters.menu.limit-for-period=3
+#表示周期，这两个参数表示30s内最多允许3次请求
+resilience4j.ratelimiter.limiters.menu.limit-refresh-period=30s
+resilience4j.ratelimiter.limiters.menu.timeout-duration=5ms
+resilience4j.ratelimiter.limiters.menu.subscribe-for-events=true
+resilience4j.ratelimiter.limiters.menu.register-health-indicator=true
+```
+
+## 运行
+使用 `ab` 进行测试，可以看到后台日志已经在抛错。
+`io.github.resilience4j.ratelimiter.RequestNotPermitted: RateLimiter 'menu' does not permit further calls
+`
+
+访问 `ratelimit event`: http://localhost:8080/actuator/ratelimiterevents  
+也可以看到相关日志，可以看到只有前三个是成功的。
+```json
+[
+    {
+      "rateLimiterName": "menu",
+      "type": "SUCCESSFUL_ACQUIRE",
+      "creationTime": "2021-04-21T11:29:16.074+08:00[Asia/Shanghai]"
+    },
+    {
+      "rateLimiterName": "menu",
+      "type": "SUCCESSFUL_ACQUIRE",
+      "creationTime": "2021-04-21T11:29:16.274+08:00[Asia/Shanghai]"
+    },
+    {
+      "rateLimiterName": "menu",
+      "type": "SUCCESSFUL_ACQUIRE",
+      "creationTime": "2021-04-21T11:29:16.274+08:00[Asia/Shanghai]"
+    },
+    {
+      "rateLimiterName": "menu",
+      "type": "FAILED_ACQUIRE",
+      "creationTime": "2021-04-21T11:29:16.280+08:00[Asia/Shanghai]"
+    },
+    {
+      "rateLimiterName": "menu",
+      "type": "FAILED_ACQUIRE",
+      "creationTime": "2021-04-21T11:29:16.280+08:00[Asia/Shanghai]"
+    },
+    {
+      "rateLimiterName": "menu",
+      "type": "FAILED_ACQUIRE",
+      "creationTime": "2021-04-21T11:29:16.284+08:00[Asia/Shanghai]"
+    }]
+```

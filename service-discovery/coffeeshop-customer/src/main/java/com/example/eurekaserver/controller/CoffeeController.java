@@ -21,6 +21,9 @@ import io.github.resilience4j.bulkhead.BulkheadFullException;
 import io.github.resilience4j.bulkhead.BulkheadRegistry;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
+import io.github.resilience4j.ratelimiter.RateLimiter;
+import io.github.resilience4j.ratelimiter.RateLimiterRegistry;
+import io.github.resilience4j.ratelimiter.RequestNotPermitted;
 import io.vavr.control.Try;
 import lombok.extern.slf4j.Slf4j;
 
@@ -34,12 +37,15 @@ public class CoffeeController {
     @Autowired CoffeeOrderService coffeeOrderService;
 
     Bulkhead bulkhead;
+    RateLimiter rateLimiter;
     private io.github.resilience4j.circuitbreaker.CircuitBreaker circuitBreaker;
 
     public CoffeeController(CircuitBreakerRegistry registry,
-            BulkheadRegistry bulkheadRegistry) {
+            BulkheadRegistry bulkheadRegistry,
+            RateLimiterRegistry rateLimiterRegistry) {
         circuitBreaker = registry.circuitBreaker("menu");
         bulkhead = bulkheadRegistry.bulkhead("menu");
+        rateLimiter = rateLimiterRegistry.rateLimiter("order");
     }
 
     @GetMapping("/")
@@ -69,5 +75,26 @@ public class CoffeeController {
     //        log.error("Fallback for get coffee");
     //        return null;
     //    }
+
+    @GetMapping("/allrl")
+    @io.github.resilience4j.ratelimiter.annotation.RateLimiter(name = "menu")
+    public List<Coffee> getAllCoffeeRateLimit() {
+        //用来演示rate Limit
+        return coffeeService.getAll();
+
+    }
+
+    @PostMapping("/orderrl")
+    public CoffeeOrder addOrderRL(@RequestBody NewOrderRequest order) {
+        CoffeeOrder res = null;
+        try {
+            res = rateLimiter.executeSupplier(() -> coffeeOrderService.addOrder(order));
+        } catch (RequestNotPermitted e) {
+            log.warn("Request not permitted");
+        }
+
+        return res;
+
+    }
 
 }
