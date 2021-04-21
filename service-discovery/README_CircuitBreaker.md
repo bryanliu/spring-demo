@@ -59,7 +59,7 @@ resilience4j.circuitbreaker.backends.menu.event-consumer-buffer-size=10
 通过`http://localhost:8080/actuator/circuitbreakerevents/` 可以看到相关事件
 可以看到前两个事件是调用成功，后面是调用失败的事件。
 ```json
-{
+[{
   "circuitBreakerName": "order",
   "type": "SUCCESS",
   "creationTime": "2021-04-20T22:18:07.673+08:00[Asia/Shanghai]",
@@ -90,6 +90,92 @@ resilience4j.circuitbreaker.backends.menu.event-consumer-buffer-size=10
 "errorMessage": "feign.FeignException$ServiceUnavailable: [503] during [POST] to [http://waiter-service/order/order] [CoffeeOrderService#addOrder(NewOrderRequest)]: [Load balancer does not contain an instance for the service waiter-service]",
 "durationInMs": 8,
 "stateTransition": null
-},
+}]
 ```
 
+# 限流
+还是使用 `resilience4j` 的Bulkhead 对接口进行限流
+## pom
+pom 文件不用变
+
+## 代码修改
+加上一个BulkheadRegistry，然后生成一个`Bulkhead`
+在需要限流的地方加上 `@Bulkhead`的标注
+```java
+public CoffeeController(CircuitBreakerRegistry registry,
+        BulkheadRegistry bulkheadRegistry) {
+    circuitBreaker = registry.circuitBreaker("menu");
+    bulkhead = bulkheadRegistry.bulkhead("menu");
+}
+
+@io.github.resilience4j.bulkhead.annotation.Bulkhead(name = "order")
+public CoffeeOrder addOrder(@RequestBody NewOrderRequest order) {
+        return coffeeOrderService.addOrder(order);
+        }
+
+```
+当然也可以编程的方式，注意看外面又套了一层`Buldhead.decorateSupplier`, 整成套娃了。
+```java
+    public List<Coffee> getAllCoffee() {
+        return Try.ofSupplier(
+                Bulkhead.decorateSupplier(bulkhead,
+                        CircuitBreaker.decorateSupplier(circuitBreaker, () -> coffeeService.getAll())))
+                .recover(Exception.class, Collections.emptyList()) //两种写法都可以
+                //                .recover(throwable -> {
+                //                    log.error("error happens when call get all coffees", throwable);
+                //                    return Collections.emptyList();
+                //                })
+                .recover(BulkheadFullException.class, Collections.emptyList())
+                .get();
+    }
+```
+
+
+## 配置
+```properties
+# 允许两个并发的Call
+resilience4j.bulkhead.backends.order.max-concurrent-calls=2
+# 最多等5ms
+resilience4j.bulkhead.backends.order.max-wait-duration=5ms
+```
+
+
+## 运行
+使用ab 命令 进行并发测试
+```shell
+ab -c 50 -n 200 -p ab_post_data -T "application/json" http://localhost:8080/coffee/order
+```
+> `ab` 是个`linux`自带的并发测试工具，`-c` 表示并发数 `-n` 表示请求总数
+> 
+> 对于`post` 要加另外两个参数，`-p` 表示post的数据， `-t` 表示请求数据类型
+
+就可以看到后台已经在抛出ERROR
+`io.github.resilience4j.bulkhead.BulkheadFullException: Bulkhead 'order' is full and does not permit further calls
+`
+
+查看 Acuator http://localhost:8080/actuator/bulkheadevents
+也可以看到相应的Event
+```json
+[
+    {
+      "bulkheadName": "order",
+      "type": "CALL_PERMITTED",
+      "creationTime": "2021-04-21T10:46:40.169+08:00[Asia/Shanghai]"
+    },
+    {
+      "bulkheadName": "order",
+      "type": "CALL_FINISHED",
+      "creationTime": "2021-04-21T10:46:40.187+08:00[Asia/Shanghai]"
+    },
+    {
+      "bulkheadName": "order",
+      "type": "CALL_PERMITTED",
+      "creationTime": "2021-04-21T10:46:40.194+08:00[Asia/Shanghai]"
+    },
+    {
+      "bulkheadName": "order",
+      "type": "CALL_REJECTED",
+      "creationTime": "2021-04-21T10:46:40.200+08:00[Asia/Shanghai]"
+    }
+]
+```

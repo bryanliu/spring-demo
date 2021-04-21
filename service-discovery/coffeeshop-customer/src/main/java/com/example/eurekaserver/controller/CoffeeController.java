@@ -16,8 +16,11 @@ import com.example.eurekaserver.model.Coffee;
 import com.example.eurekaserver.model.CoffeeOrder;
 import com.example.eurekaserver.model.NewOrderRequest;
 
+import io.github.resilience4j.bulkhead.Bulkhead;
+import io.github.resilience4j.bulkhead.BulkheadFullException;
+import io.github.resilience4j.bulkhead.BulkheadRegistry;
+import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
-import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.vavr.control.Try;
 import lombok.extern.slf4j.Slf4j;
 
@@ -30,10 +33,13 @@ public class CoffeeController {
 
     @Autowired CoffeeOrderService coffeeOrderService;
 
+    Bulkhead bulkhead;
     private io.github.resilience4j.circuitbreaker.CircuitBreaker circuitBreaker;
 
-    public CoffeeController(CircuitBreakerRegistry registry) {
+    public CoffeeController(CircuitBreakerRegistry registry,
+            BulkheadRegistry bulkheadRegistry) {
         circuitBreaker = registry.circuitBreaker("menu");
+        bulkhead = bulkheadRegistry.bulkhead("menu");
     }
 
     @GetMapping("/")
@@ -41,18 +47,20 @@ public class CoffeeController {
 
     public List<Coffee> getAllCoffee() {
         return Try.ofSupplier(
-                io.github.resilience4j.circuitbreaker.CircuitBreaker.decorateSupplier(
-                        circuitBreaker, () -> coffeeService.getAll()))
-                //.recover(Exception.class, Collections.emptyList()) //两种写法都可以
-                .recover(throwable -> {
-                    log.error("error happens when call get all coffees", throwable);
-                    return Collections.emptyList();
-                })
+                Bulkhead.decorateSupplier(bulkhead,
+                        CircuitBreaker.decorateSupplier(circuitBreaker, () -> coffeeService.getAll())))
+                .recover(Exception.class, Collections.emptyList()) //两种写法都可以
+                //                .recover(throwable -> {
+                //                    log.error("error happens when call get all coffees", throwable);
+                //                    return Collections.emptyList();
+                //                })
+                .recover(BulkheadFullException.class, Collections.emptyList())
                 .get();
     }
 
     @PostMapping("/order")
-    @CircuitBreaker(name = "order")
+    @io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker(name = "order")
+    @io.github.resilience4j.bulkhead.annotation.Bulkhead(name = "order")
     public CoffeeOrder addOrder(@RequestBody NewOrderRequest order) {
         return coffeeOrderService.addOrder(order);
     }
