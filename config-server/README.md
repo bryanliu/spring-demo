@@ -60,12 +60,12 @@ spring.cloud.config.server.git.uri=file:///Users/admin/playgroupd/config-server-
 ```xml
 coffee:
   discount: 80
+  prefix: bry-
 ```
 `waiter-service-dev.yml`
 ```xml
 coffee:
   discount: 60
-  prefix: bry-
 ```
 
 通过访问`http://localhost:8888` + 相应的服务名，profile就可以看到配置内容
@@ -74,32 +74,33 @@ coffee:
 coffee.discount: 60
 coffee.prefix: bry-
 ```
+> 注意，虽然我没有在dev中配置coffee.prefix, 但是config-config仍然会从base中合并这个配置项
 
 访问 `http://localhost:8888/waiter-service/dev` 可以看到
 ```json
 {
-  "name": "waiter-service",
-  "profiles": [
-    "dev"
-  ],
-  "label": null,
-  "version": "4ca35a956a1d16701354172303d35e33a163f3ca",
-  "state": null,
-  "propertySources": [
-    {
-      "name": "file:///Users/admin/playgroupd/config-server-config-git/waiter-service-dev.yml",
-      "source": {
-        "coffee.discount": 60,
-        "coffee.prefix": "bry-"
-      }
-    },
-    {
-      "name": "file:///Users/admin/playgroupd/config-server-config-git/waiter-service.yml",
-      "source": {
-        "coffee.discount": 80
-      }
-    }
-  ]
+"name": "waiter-service",
+"profiles": [
+"dev"
+],
+"label": null,
+"version": "4ca35a956a1d16701354172303d35e33a163f3ca",
+"state": null,
+"propertySources": [
+{
+"name": "file:///Users/admin/playgroupd/config-server-config-git/waiter-service-dev.yml",
+"source": {
+"coffee.discount": 60
+}
+},
+{
+"name": "file:///Users/admin/playgroupd/config-server-config-git/waiter-service.yml",
+"source": {
+"coffee.discount": 80,
+"coffee.prefix": "bry-"
+}
+}
+]
 }
 ```
 
