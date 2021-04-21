@@ -1,4 +1,4 @@
-# 断路器 限流器
+# 断路器 并发控制器 调用次数控制器
 在 spring cloud 3 中 Hystrix 已经不再被支持。所以做了一个`resilience4j`的支持
 
 ## pom
