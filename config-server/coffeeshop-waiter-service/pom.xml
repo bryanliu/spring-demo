@@ -12,7 +12,7 @@
 	<artifactId>coffeeshop-waiter-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>coffeeshop-waiter-service</name>
-	<description>coffeeshop waiter service for config-server/description>
+	<description>coffeeshop waiter service for config-server</description>
 	<properties>
 		<java.version>1.8</java.version>
 		<spring-cloud.version>2020.0.2</spring-cloud.version>
