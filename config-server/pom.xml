@@ -18,7 +18,6 @@
     <modules>
         <module>coffeeshop-waiter-service</module>
         <module>config-server</module>
-        <module>coffeeshop-customer</module>
     </modules>
 
     <dependencyManagement>
