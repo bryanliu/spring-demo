@@ -202,3 +202,43 @@ zookeeper 会监听节点值的变化，如果节点值有变化，会推送到z
 * `@Value` 引用的properites可以在启动的时候读到`config server`的值，
 但是无法感知更新
 * `@RefreshScope` 是可以感知到更新的。
+
+## Consul 作为配置中心
+### POM
+只要将 `zookeeper-config` 换成 `consul-config`
+```xml
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-starter-consul-config</artifactId>
+</dependency>
+```
+### 配置
+确保 `host` `port` 都设置对了，能够连到consul 服务器  
+还要设这个配置为 consul  `spring.config.import=consul:`
+```properties
+# Consul 服务注册发现相关配置
+spring.cloud.consul.port=8500
+spring.cloud.consul.host=localhost
+spring.cloud.consul.discovery.prefer-ip-address=true
+
+#consul 作为配置中心相关
+# 下面两个都是默认的，没有特殊需求，就不需要变了。
+#spring.cloud.consul.config.watch.enabled=true
+#spring.cloud.consul.config.watch.delay=1000
+spring.config.import=consul:
+spring.cloud.consul.config.enabled=true
+spring.cloud.consul.config.format=yaml
+```
+
+在consul控制台中，打开key/value的tab  
+建立 `/data/{application}/data` 这个节点，选择 `yaml` 格式。
+见下图
+![img.png](source/img.png)
+
+### 运行
+运行系统，就可以看到应用从Consul 读取了配置  
+在consul中更新了配置，应用马上就可以刷到配置了。
+
+```
+2021-04-21 21:37:16.453  INFO 17874 --- [TaskScheduler-1] o.s.c.e.event.RefreshEventListener       : Refresh keys changed: [coffee.prefix]
+```
