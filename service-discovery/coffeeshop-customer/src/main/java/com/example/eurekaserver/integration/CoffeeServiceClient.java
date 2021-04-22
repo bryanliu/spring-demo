@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import com.example.eurekaserver.model.Coffee;
 
 @FeignClient(name="waiter-service",  path = "/coffee")
-public interface CoffeeService {
+public interface CoffeeServiceClient {
 
     @GetMapping(path="/all")
     List<Coffee> getAll();

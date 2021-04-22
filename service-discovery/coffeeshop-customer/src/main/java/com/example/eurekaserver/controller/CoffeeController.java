@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.eurekaserver.integration.CoffeeOrderService;
-import com.example.eurekaserver.integration.CoffeeService;
+import com.example.eurekaserver.integration.CoffeeOrderServiceClient;
+import com.example.eurekaserver.integration.CoffeeServiceClient;
 import com.example.eurekaserver.model.Coffee;
 import com.example.eurekaserver.model.CoffeeOrder;
 import com.example.eurekaserver.model.NewOrderRequest;
@@ -32,9 +32,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class CoffeeController {
 
-    @Autowired CoffeeService coffeeService;
+    @Autowired CoffeeServiceClient coffeeServiceClient;
 
-    @Autowired CoffeeOrderService coffeeOrderService;
+    @Autowired CoffeeOrderServiceClient coffeeOrderServiceClient;
 
     Bulkhead bulkhead;
     RateLimiter rateLimiter;
@@ -54,7 +54,7 @@ public class CoffeeController {
     public List<Coffee> getAllCoffee() {
         return Try.ofSupplier(
                 Bulkhead.decorateSupplier(bulkhead,
-                        CircuitBreaker.decorateSupplier(circuitBreaker, () -> coffeeService.getAll())))
+                        CircuitBreaker.decorateSupplier(circuitBreaker, () -> coffeeServiceClient.getAll())))
                 .recover(Exception.class, Collections.emptyList()) //两种写法都可以
                 //                .recover(throwable -> {
                 //                    log.error("error happens when call get all coffees", throwable);
@@ -68,7 +68,7 @@ public class CoffeeController {
     @io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker(name = "order")
     @io.github.resilience4j.bulkhead.annotation.Bulkhead(name = "order")
     public CoffeeOrder addOrder(@RequestBody NewOrderRequest order) {
-        return coffeeOrderService.addOrder(order);
+        return coffeeOrderServiceClient.addOrder(order);
     }
 
     //    public List<Coffee> fallbackGetCoffee() {
@@ -80,7 +80,7 @@ public class CoffeeController {
     @io.github.resilience4j.ratelimiter.annotation.RateLimiter(name = "menu")
     public List<Coffee> getAllCoffeeRateLimit() {
         //用来演示rate Limit
-        return coffeeService.getAll();
+        return coffeeServiceClient.getAll();
 
     }
 
@@ -88,7 +88,7 @@ public class CoffeeController {
     public CoffeeOrder addOrderRL(@RequestBody NewOrderRequest order) {
         CoffeeOrder res = null;
         try {
-            res = rateLimiter.executeSupplier(() -> coffeeOrderService.addOrder(order));
+            res = rateLimiter.executeSupplier(() -> coffeeOrderServiceClient.addOrder(order));
         } catch (RequestNotPermitted e) {
             log.warn("Request not permitted");
         }

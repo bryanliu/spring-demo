@@ -13,8 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
-import com.example.eurekaserver.integration.CoffeeOrderService;
-import com.example.eurekaserver.integration.CoffeeService;
+import com.example.eurekaserver.integration.CoffeeOrderServiceClient;
+import com.example.eurekaserver.integration.CoffeeServiceClient;
 import com.example.eurekaserver.model.Coffee;
 import com.example.eurekaserver.model.CoffeeOrder;
 import com.example.eurekaserver.model.NewOrderRequest;
@@ -32,9 +32,9 @@ public class CustomerRunner implements ApplicationRunner {
     DiscoveryClient discoveryClient;
 
     @Autowired
-    CoffeeService coffeeService;
+    CoffeeServiceClient coffeeServiceClient;
 
-    @Autowired CoffeeOrderService coffeeOrderService;
+    @Autowired CoffeeOrderServiceClient coffeeOrderServiceClient;
 
     @Override public void run(ApplicationArguments args) throws Exception {
 
@@ -58,13 +58,13 @@ public class CustomerRunner implements ApplicationRunner {
     }
 
     void getMenuWithFeigh() {
-        List<Coffee> coffees = coffeeService.getAll();
+        List<Coffee> coffees = coffeeServiceClient.getAll();
         coffees.forEach(c -> log.info("{}", c));
     }
 
     void addCoffee(){
         NewOrderRequest req = NewOrderRequest.builder().customer("Bryan").items(Arrays.asList("mocha")).build();
-        CoffeeOrder res = coffeeOrderService.addOrder(req);
+        CoffeeOrder res = coffeeOrderServiceClient.addOrder(req);
         log.info("Add order {}", res);
     }
 }

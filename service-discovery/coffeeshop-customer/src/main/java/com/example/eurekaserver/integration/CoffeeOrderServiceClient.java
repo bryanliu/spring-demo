@@ -8,7 +8,7 @@ import com.example.eurekaserver.model.CoffeeOrder;
 import com.example.eurekaserver.model.NewOrderRequest;
 
 @FeignClient(name = "waiter-service", contextId = "coffeeorder", path = "/order")
-public interface CoffeeOrderService {
+public interface CoffeeOrderServiceClient {
 
     @PostMapping("/order")
     CoffeeOrder addOrder(@RequestBody NewOrderRequest request);
