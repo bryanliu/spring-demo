@@ -5,6 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.stream.annotation.EnableBinding;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import com.bry.coffeeshopjpa.support.Barista;
@@ -16,6 +17,7 @@ import com.bry.coffeeshopjpa.support.Barista;
 //@EnableAspectJAutoProxy // 可以不开启，Spring Boot 做自动配置了。
 @EnableDiscoveryClient
 @EnableBinding(Barista.class)
+@EnableScheduling
 public class CoffeeshopWaiterServiceInMQ {
 
     public static void main(String[] args) {

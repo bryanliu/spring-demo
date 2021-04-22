@@ -133,3 +133,71 @@ spring.cloud.stream.kafka.binder.defaultBrokerPort=9092
 
     }
 ```
+## ApplicationEvent 和 Scheduling
+居然课程快到最后了，还有彩蛋，在`Kafka`章节的最后阶段介绍了`Schduling` 还有`ApplicationEvent`  
+ApplicationEvent的Publish要实现 
+```java
+public class CoffeeOrderService implements ApplicationEventPublisherAware {
+
+    @Override public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
+        this.applicationEventPublisher = applicationEventPublisher;
+    }
+    
+    // 然后就发布发布Event了
+    applicationEventPublisher.publishEvent(new OrderWaitingEvent(order));
+
+```
+
+`OrderWaitingEvent` 继承 `ApplicationEvent`
+```java
+@Data
+public class OrderWaitingEvent extends ApplicationEvent {
+    /**
+     * Create a new {@code ApplicationEvent}.
+     *
+     * @param order the object on which the event initially occurred or with
+     * which the event is associated (never {@code null})
+     */
+    private CoffeeOrder order;
+
+    public OrderWaitingEvent(CoffeeOrder order) {
+        super(order);
+        this.order = order;
+
+    }
+}
+```
+
+最后在处理方法上加上标注
+```java
+@EventListener
+public void acceptOrder(OrderWaitingEvent event) {
+    log.info("Get order id {}", event.getOrder().getId());
+    orderMap.put(event.getOrder().getId(), event.getOrder());
+
+}
+```
+
+### Scheduling
+也是很方便
+首先在主类上 加上标注 `@EnableScheduling`
+
+然后对要定期执行的方法加上`Annotation`，并且加上执行周期，周期有很多中表示方式，这个放在后面研究吧
+```java
+@Scheduled(fixedRate = 10000)
+public void waitingCoffee(){
+    if(!orderMap.isEmpty()){
+
+        log.info("I'm waiting for my coffee");
+        orderMap.values().stream()
+                .map(order -> order.getId())
+                .forEach(orderid -> {
+            log.info("I got my Coffee {}", orderid);
+            //orderMap.remove(orderid);
+        });
+    }
+
+    orderMap.clear();
+}
+
+```
