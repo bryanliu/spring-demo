@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.bryan</groupId>
-    <artifactId>config-server-demo-parent</artifactId>
+    <artifactId>spring-stream-demo-parent</artifactId>
     <packaging>pom</packaging>
     <version>1.0</version>
     <name>Spring Autoconfig demo</name>

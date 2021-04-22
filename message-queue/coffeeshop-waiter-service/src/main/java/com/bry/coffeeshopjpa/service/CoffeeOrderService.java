@@ -12,7 +12,10 @@ import com.bry.coffeeshopjpa.model.OrderState;
 import com.bry.coffeeshopjpa.repository.CoffeeOrderRepository;
 import com.bry.coffeeshopjpa.support.Barista;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Service
+@Slf4j
 public class CoffeeOrderService {
 
     @Autowired CoffeeOrderRepository cor;
@@ -31,7 +34,8 @@ public class CoffeeOrderService {
         cor.save(order);
 
         //Send message
-        barista.newOrders().send(MessageBuilder.withPayload(order.getId()).build());
+        Boolean res = barista.newOrders().send(MessageBuilder.withPayload(order.getId()).build());
+        log.info("Send msg {}", res);
 
         return order;
     }

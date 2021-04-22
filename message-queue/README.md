@@ -72,3 +72,64 @@ public class BaristaListener {
 这个Demo 我们做的是在下单的时候我们会发送消息到Barista服务，Barista服务监听之后，做相关逻辑，然后发送消息到`finishedOrder`队列。这个队列waiter 服务会监听
 
 所以我们调用订单接口，就会看到相应的消息发送和接收
+
+## 使用Kafka
+### POM
+将stream-rabbit 替换为 binder-kafka
+```xml
+<!--		<dependency>-->
+<!--			<groupId>org.springframework.cloud</groupId>-->
+<!--			<artifactId>spring-cloud-starter-stream-rabbit</artifactId>-->
+<!--		</dependency>-->
+<dependency>
+    <groupId>org.springframework.cloud</groupId>
+    <artifactId>spring-cloud-stream-binder-kafka</artifactId>
+</dependency>
+```
+
+### 配置
+启动Kafka，Kafka没有单独的镜像，可以用一下DockerComposer 启动
+```yaml
+---
+version: '2'
+services:
+  zookeeper:
+    image: zookeeper:latest
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    depends_on:
+      - zookeeper
+    ports:
+      - 9092:9092
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+```
+properties
+其实下面的都是默认的，不过还是显式声明一下
+```properties
+#kafka
+spring.cloud.stream.kafka.binder.brokers=localhost
+spring.cloud.stream.kafka.binder.defaultBrokerPort=9092
+```
+
+### 程序修改
+程序没什么要修改的，不过这次发送消息改成声明的方式，注意方法要有返回值
+```java
+    @StreamListener(Waiter.NEW_ORDRS)
+    @SendTo(Waiter.FINISHED_ORDRS)//使用这个Annotation
+    public Integer newOrders(Integer id) throws InterruptedException {
+        log.info("Get new orders {}", id);
+
+        //Just echo back
+        //Thread.sleep(10); //Sleep as process time
+
+        return id;// 要有返回值
+
+    }
+```
