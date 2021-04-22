@@ -4,7 +4,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+
+import com.bry.coffeeshopjpa.support.Barista;
 
 @SpringBootApplication
 //@EnableJpaRepositories
@@ -12,11 +15,12 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableCaching(proxyTargetClass = true)
 //@EnableAspectJAutoProxy // 可以不开启，Spring Boot 做自动配置了。
 @EnableDiscoveryClient
-public class CoffeeshopWaiterService {
+@EnableBinding(Barista.class)
+public class CoffeeshopWaiterServiceInMQ {
 
     public static void main(String[] args) {
 
-        SpringApplication.run(CoffeeshopWaiterService.class, args);
+        SpringApplication.run(CoffeeshopWaiterServiceInMQ.class, args);
     }
 
     //    @Bean
