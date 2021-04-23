@@ -18,11 +18,11 @@ import com.bry.coffeeshopjpa.support.Barista;
 @EnableDiscoveryClient
 @EnableBinding(Barista.class)
 @EnableScheduling
-public class CoffeeshopWaiterServiceInMQ {
+public class CoffeeshopWaiterServiceInST {
 
     public static void main(String[] args) {
 
-        SpringApplication.run(CoffeeshopWaiterServiceInMQ.class, args);
+        SpringApplication.run(CoffeeshopWaiterServiceInST.class, args);
     }
 
     //    @Bean

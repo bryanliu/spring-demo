@@ -16,11 +16,11 @@ import com.bry.coffeeshopjpa.support.Waiter;
 //@EnableAspectJAutoProxy // 可以不开启，Spring Boot 做自动配置了。
 @EnableDiscoveryClient
 @EnableBinding(Waiter.class)
-public class CoffeeshopBaristaServiceInMQ {
+public class CoffeeshopBaristaServiceInST {
 
     public static void main(String[] args) {
 
-        SpringApplication.run(CoffeeshopBaristaServiceInMQ.class, args);
+        SpringApplication.run(CoffeeshopBaristaServiceInST.class, args);
     }
 
     //    @Bean

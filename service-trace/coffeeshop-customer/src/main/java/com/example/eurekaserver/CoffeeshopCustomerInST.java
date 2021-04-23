@@ -22,10 +22,10 @@ import com.example.eurekaserver.support.CustomConnectionKeepAliveStrategy;
 @EnableDiscoveryClient
 @EnableFeignClients
 //@EnableCircuitBreaker
-public class CoffeeshopCustomerInServiceDiscoveryApplication {
+public class CoffeeshopCustomerInST {
 
     public static void main(String[] args) {
-        SpringApplication.run(CoffeeshopCustomerInServiceDiscoveryApplication.class, args);
+        SpringApplication.run(CoffeeshopCustomerInST.class, args);
     }
 
     @Bean
