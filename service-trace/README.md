@@ -14,7 +14,10 @@
 </dependency>
 ```
 ## 配置
-在三个服务中加上 ZIPKIN的配置
+在三个服务中加上 ZIPKIN的配置  
+* 第一个配置比较明确，是地址   
+* 第二个配置是采样率  
+* 第三个配置是Sender 类型，这里我们先采用Web 的形式，稍后我们会采用Rabbit MQ的形式
 ```properties
 # Trace
 spring.zipkin.base-url=http://localhost:9411
@@ -35,3 +38,17 @@ ab -c 1 -n 1 -p /Users/admin/test/ab_post_data -T "application/json" http://loca
 ```
 就可以在 zipkin 的页面看到trace了
 ![img.png](source/img.png)
+
+# 附录 1
+使用Rabbit作为sender type
+三个服务中都将SenderType变为
+```properties
+spring.zipkin.sender.type=rabbit
+```
+但是之前的zipkin是不会去监听队列的，所以我们要重启一个zipkin 让他和zipkin做个关联
+```shell
+docker run --name rabbit-zipkin -d -p 9411:9411 --link rabbitmq -e RABBIT_ADDRESSES=rabbitmq:5672 -e RABBIT_USER=spring -e RABBIT_PASSWORD=spring openzipkin/zipkin
+```
+这样Zipkin就能监听到队列的消息了。
+
+对了，Customer 服务原来没有MQ的依赖的，也要加上相应的依赖和配置
