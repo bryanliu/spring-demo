@@ -19,6 +19,8 @@
 > 
 > 原因是由于`docker-compose` 用的是`links` link到 `consul`, 所以在配置文件里面把`consul地址`改成了consul容器的名字，结果还是读到localhost, 所以连接被拒绝了。
 > 
+> **尤其要注意**：这个配置不生效只是在启动阶段，在启动完之后，服务能够正常连接consul，所以猜测这个还是和启动加载配置阶段有关系。
+> 
 >> Config data resource '[ConsulConfigDataResource@3979c6e8 context = 'config/barista-service,dev/', optional = true, properties = [ConsulConfigProperties@6fb3d3bb enabled = true, prefixes = list['config'], defaultContext = 'application', profileSeparator = ',', format = YAML, dataKey = 'data', aclToken = [null], watch = [ConsulConfigProperties.Watch@38a3c078 waitTime = 55, enabled = true, delay = 1000], failFast = true, name = 'barista-service']]' via location 'consul:' does not exist
 >>
 >> Action:  
