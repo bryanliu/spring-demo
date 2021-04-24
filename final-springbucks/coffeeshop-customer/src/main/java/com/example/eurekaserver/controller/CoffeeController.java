@@ -65,8 +65,8 @@ public class CoffeeController {
     }
 
     @PostMapping("/order")
-    @io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker(name = "order")
-    @io.github.resilience4j.bulkhead.annotation.Bulkhead(name = "order")
+    //    @io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker(name = "order")
+    //    @io.github.resilience4j.bulkhead.annotation.Bulkhead(name = "order")
     public CoffeeOrder addOrder(@RequestBody NewOrderRequest order) {
         return coffeeOrderServiceClient.addOrder(order);
     }
