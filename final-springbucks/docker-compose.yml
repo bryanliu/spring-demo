@@ -77,6 +77,8 @@ services:
       - 8080:8080
     environment:
       - SPRING_PROFILES_ACTIVE
+      - SPRING_CLOUD_CONSUL_HOST
+      - SERVER_PORT=8080
 
   barista-service:
     image: springbucks/coffeeshop-barista-service:0.0.1-SNAPSHOT
@@ -92,6 +94,7 @@ services:
       - zipkin
     environment:
       - SPRING_PROFILES_ACTIVE
+      - CONSUL_HOST
 
   customer-service-8090:
     image: springbucks/coffeeshop-customer:0.0.1-SNAPSHOT

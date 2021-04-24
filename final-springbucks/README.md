@@ -30,3 +30,66 @@
 ## 启动
 1. Terminal 进入到 docker-compose.yml 的目录  
 2. 使用 `docker-compose up -d --build` 就可以启动所有的容器和中间件依赖了。
+
+
+## 问题解答
+针对上面的在启动阶段没法读取 application-{profile} 里面的配置项的问题，有两种解决方式：  
+
+**一种是 将配置参数化，参数可以在运行时候指定**  
+在`application.properties` 中
+```properties
+spring.cloud.consul.host=${CONSUL_HOST:localhost}
+```
+
+然后在运行的是时候指定参数
+在docker-compose 中
+```yaml
+  barista-service:
+    image: springbucks/coffeeshop-barista-service:0.0.1-SNAPSHOT
+    depends_on:
+     # - mysql
+      - consul
+      - rabbitmq
+      - zipkin
+    links:
+      #- mysql
+      - consul
+      - rabbitmq
+      - zipkin
+    environment:
+      - SPRING_PROFILES_ACTIVE
+      - CONSUL_HOST
+```
+`CONSUL_HOST` 的值可以就在这儿设置，也可以设置在.env 文件中
+```properties
+CONSUL_HOST=consul
+```
+
+**一种是直接在运行的时候指定**
+`docker-compose` 中
+```yaml
+  waiter-service:
+    image: springbucks/coffeeshop-waiter-service:0.0.1-SNAPSHOT
+    depends_on:
+     # - mysql
+      - consul
+      - rabbitmq
+      - zipkin
+     # - redis
+    links:
+     # - mysql
+      - consul
+      - rabbitmq
+      - zipkin
+      #- redis
+    expose:
+      - 8080
+    ports:
+      - 8080:8080
+    environment:
+      - SPRING_PROFILES_ACTIVE
+      - SPRING_CLOUD_CONSUL_HOST
+```
+注意：`SPRING_CLOUD_CONSUL_HOST` 就是`spring.cloud.consul.host` 
+值也可以放在`.env` 文件中
+这样在加载器和运行期都能够读到了
